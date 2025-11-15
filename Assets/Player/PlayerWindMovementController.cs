@@ -52,6 +52,7 @@ public class PlayerWindMovementController : MonoBehaviour
             _rb.AddForce(dir, ForceMode.Acceleration);
             timer++;
             inWindDash = true;
+
             yield return new WaitForFixedUpdate();
         }
         inWindDash = false;
@@ -68,7 +69,6 @@ public class PlayerWindMovementController : MonoBehaviour
         int duration = 5;
         int timer = 0;
 
-        Debug.Log("!");
 
         while (timer < duration)
         {
