@@ -66,8 +66,11 @@ public class PlayerMovement : MonoBehaviour
         Vector3 movementVector = ((new Vector3(_cam.transform.forward.x, 0f, _cam.transform.forward.z) * _moveInput.y) + (_cam.transform.right * _moveInput.x)) * _currentSpeed;
         _rb.linearVelocity = new Vector3(movementVector.x, _rb.linearVelocity.y, movementVector.z);
 
-        Quaternion targetRot = Quaternion.LookRotation(movementVector);
-        _player.transform.rotation = Quaternion.Slerp(_player.transform.rotation, targetRot, Time.fixedDeltaTime * 10f);
+        if (_moveInput != Vector2.zero)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(movementVector);
+            _player.transform.rotation = Quaternion.Slerp(_player.transform.rotation, targetRot, Time.fixedDeltaTime * 10f);
+        }
 
         if (isGrounded)
         {
