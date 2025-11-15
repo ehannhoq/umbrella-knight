@@ -2534,8 +2534,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97a00dca8c81b4ce89871f7cf5be1e4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _openUmbrella: {fileID: 919132149155446097, guid: cda13090ae31644d2b79acd36835a162, type: 3}
-  _closedUmbrella: {fileID: 919132149155446097, guid: 3a66f9dd423b8423fa11aaed066ad6a7, type: 3}
+  _openUmbrella: {fileID: 919132149155446097, guid: 3a66f9dd423b8423fa11aaed066ad6a7, type: 3}
+  _closedUmbrella: {fileID: 919132149155446097, guid: 986fd6178bef7a54e90d77e06fe2dc95, type: 3}
   _heightToUseAerialMoves: 3
   _aerialSlamSpeed: 20
   _canUseAerialMoves: 0
@@ -3373,7 +3373,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8290689258756950089, guid: a9b8ba1831e8a76488572601a09b8381, type: 3}
       propertyPath: m_LocalScale.x
-      value: 5
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8290689258756950089, guid: a9b8ba1831e8a76488572601a09b8381, type: 3}
       propertyPath: m_LocalScale.y
@@ -3381,7 +3381,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8290689258756950089, guid: a9b8ba1831e8a76488572601a09b8381, type: 3}
       propertyPath: m_LocalScale.z
-      value: 5
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8290689258756950089, guid: a9b8ba1831e8a76488572601a09b8381, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3421,6 +3421,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8290689258756950089, guid: a9b8ba1831e8a76488572601a09b8381, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8290689258756950089, guid: a9b8ba1831e8a76488572601a09b8381, type: 3}
+      propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
