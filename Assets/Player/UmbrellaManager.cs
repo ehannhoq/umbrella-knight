@@ -43,8 +43,8 @@ public class UmbrellaManager : MonoBehaviour
         Transform rightHand = _animator.GetBoneTransform(HumanBodyBones.RightHand);
         _goUmbrella = Instantiate(_closedUmbrella, rightHand.position, rightHand.rotation, rightHand);
 
-        _goUmbrella.transform.localPosition = new Vector3(-0.015f, -0.022f, 0.007f);
-        _goUmbrella.transform.localRotation = Quaternion.Euler(52.053f, -58.615f, -58.528f);
+        _goUmbrella.transform.localPosition = new Vector3(-0.00022f, 0.00133f, -0.00223f);
+        _goUmbrella.transform.localRotation = Quaternion.Euler(-1.443f, 11.238f, -31.748f);
         _goUmbrella.transform.localScale = new Vector3(0.006f, 0.006f, 0.006f);
 
         umbrellaState = UmbrellaState.Closed;
@@ -108,8 +108,8 @@ public class UmbrellaManager : MonoBehaviour
         Destroy(_goUmbrella);
         _goUmbrella = Instantiate(umbrellaModel, rightHand.position, rightHand.rotation, rightHand);
 
-        _goUmbrella.transform.localPosition = new Vector3(-0.015f, -0.022f, 0.007f);
-        _goUmbrella.transform.localRotation = Quaternion.Euler(52.053f, -58.615f, -58.528f);
+        _goUmbrella.transform.localPosition = new Vector3(-0.00022f, 0.00133f, -0.00223f);
+        _goUmbrella.transform.localRotation = Quaternion.Euler(-1.443f, 11.238f, -31.748f);
         _goUmbrella.transform.localScale = new Vector3(0.006f, 0.006f, 0.006f);
     }
 }
