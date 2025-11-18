@@ -16,15 +16,17 @@ public class UmbrellaManager : MonoBehaviour
     [SerializeField] GameObject _closedUmbrella;
     [SerializeField] float _heightToUseAerialMoves;
     [SerializeField] float _aerialSlamSpeed;
+    [SerializeField] float _attackNudgeAmount;
     GameObject _player;
+    GameObject _cam;
     Rigidbody _rb;
     PlayerMovement _movement;
     Animator _animator;
     GameObject _goUmbrella;
-    [SerializeField] bool _canUseAerialMoves;
-    Action _attacked;
+    bool _canUseAerialMoves;
     int _attackPhase;
     Coroutine _resetAttackCoroutine;
+    bool _inAttackAnimation;
 
     public InputAction blockAction;
     public UmbrellaState umbrellaState;
@@ -40,6 +42,7 @@ public class UmbrellaManager : MonoBehaviour
     void Start()
     {
         _player = GameObject.FindWithTag("Player");
+        _cam = GameObject.FindWithTag("MainCamera");
         _rb = _player.GetComponent<Rigidbody>();
 
         _movement = GetComponent<PlayerMovement>();
@@ -69,7 +72,18 @@ public class UmbrellaManager : MonoBehaviour
                 umbrellaState = UmbrellaState.Open;
                 UpdateUmbrella(_openUmbrella);
                 _movement.AddSpeedMultiplier("umbrella", 0.5f);
+                _animator.SetBool("Blocking", true);
+
+                if (_resetAttackCoroutine != null)
+                {
+                    _attackPhase = 0;
+                    _movement.canMove = true;
+                    _resetAttackCoroutine = null;
+                    _animator.SetTrigger("ResetAttack");
+                }
             }
+
+            _movement.SetPlayerRotationToCameraRotation(Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized);
         }
         else
         {
@@ -78,35 +92,50 @@ public class UmbrellaManager : MonoBehaviour
                 umbrellaState = UmbrellaState.Closed;
                 UpdateUmbrella(_closedUmbrella);
                 _movement.RemoveSpeedMultiplier("umbrella");
+                _animator.SetBool("Blocking", false);
             }
         }
     }
 
     public void OnAttack()
-    {       
+    {
         if (umbrellaState == UmbrellaState.Open) return;
 
-        _movement.canMove = false;
+        if (_inAttackAnimation) return;
 
-
-        
         if (_canUseAerialMoves)
         {
             OnAerialAttack();
             return;
         }
 
-        _animator.SetTrigger("Attack" + _attackPhase);
-        if (_attackPhase++ >= 3) _attackPhase = 0;
+        _inAttackAnimation = true;
+
+        _movement.canMove = false;
         _animator.SetBool("Walking", false);
+
         if (_resetAttackCoroutine != null)
         {
             StopCoroutine(_resetAttackCoroutine);
             _resetAttackCoroutine = null;
         }
-
         _resetAttackCoroutine = StartCoroutine(ResetMovement());
 
+        _animator.SetTrigger("Attack" + _attackPhase);
+        if (_attackPhase++ >= 2) _attackPhase = 0;
+        StartCoroutine(PlayerNudge());
+        StartCoroutine(WaitForAnimation());
+    }
+
+    IEnumerator PlayerNudge()
+    {
+        float time = 8;
+        while (time > 0)
+        {
+            yield return new WaitForFixedUpdate();
+            _rb.AddForce(_rb.transform.forward * _attackNudgeAmount, ForceMode.Acceleration);
+            time--;
+        }
     }
 
     IEnumerator ResetMovement()
@@ -117,6 +146,13 @@ public class UmbrellaManager : MonoBehaviour
         _movement.canMove = true;
         _resetAttackCoroutine = null;
         _animator.SetTrigger("ResetAttack");
+    }
+
+    IEnumerator WaitForAnimation()
+    {
+        AnimatorClipInfo[] text = _animator.GetCurrentAnimatorClipInfo(0);
+        yield return new WaitForSeconds(text[0].clip.length - 0.5f);
+        _inAttackAnimation = false;
     }
 
     void OnAerialAttack()

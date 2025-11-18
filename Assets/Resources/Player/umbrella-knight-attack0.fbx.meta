@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cb5f67f44a19b4dbf9c303e5b3a33774
+guid: c411860cb7ccf4d4b8d3b87ce0178d58
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -42,7 +42,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: umbrella-knight-attack-1
+      name: umbrella-knight-attack-0
       takeName: Scene
       internalID: -623603649343465320
       firstFrame: 0
