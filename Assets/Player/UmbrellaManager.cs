@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -21,10 +22,13 @@ public class UmbrellaManager : MonoBehaviour
     Animator _animator;
     GameObject _goUmbrella;
     [SerializeField] bool _canUseAerialMoves;
-    Action attacked;
+    Action _attacked;
+    int _attackPhase;
+    Coroutine _resetAttackCoroutine;
 
     public InputAction blockAction;
     public UmbrellaState umbrellaState;
+    public float attackTime;
 
 
     void OnEnable()
@@ -81,6 +85,10 @@ public class UmbrellaManager : MonoBehaviour
     public void OnAttack()
     {       
         if (umbrellaState == UmbrellaState.Open) return;
+
+        _movement.canMove = false;
+
+
         
         if (_canUseAerialMoves)
         {
@@ -88,8 +96,27 @@ public class UmbrellaManager : MonoBehaviour
             return;
         }
 
-        System.Random rand = new System.Random();
-        _animator.SetTrigger("Attack" + rand.Next(1, 4));
+        _animator.SetTrigger("Attack" + _attackPhase);
+        if (_attackPhase++ >= 3) _attackPhase = 0;
+        _animator.SetBool("Walking", false);
+        if (_resetAttackCoroutine != null)
+        {
+            StopCoroutine(_resetAttackCoroutine);
+            _resetAttackCoroutine = null;
+        }
+
+        _resetAttackCoroutine = StartCoroutine(ResetMovement());
+
+    }
+
+    IEnumerator ResetMovement()
+    {
+        yield return new WaitForSeconds(attackTime);
+
+        _attackPhase = 0;
+        _movement.canMove = true;
+        _resetAttackCoroutine = null;
+        _animator.SetTrigger("ResetAttack");
     }
 
     void OnAerialAttack()

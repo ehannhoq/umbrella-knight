@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
     public float gravityMultiplier;
     public bool isGrounded;
     public bool onJumpCooldown;
+    public bool canMove;
 
     void Start()
     {
@@ -38,6 +39,8 @@ public class PlayerMovement : MonoBehaviour
         _animator = _player.GetComponent<Animator>();
         _movementSpeedMultipliers = new Dictionary<string, float>();
         _linearDampening = _rb.linearDamping;
+
+        canMove = true;
 
         _rb.freezeRotation = true;
         // Cursor.visible = false;
@@ -51,30 +54,9 @@ public class PlayerMovement : MonoBehaviour
         isGrounded = Math.Abs(_rb.linearVelocity.y) < 0.001f || Physics.Raycast(_player.transform.position, -_player.transform.up, 0.1f);
 
         if (isGrounded)
+        {
             _rb.linearDamping = _linearDampening;
-        else
-        {
-            _rb.linearDamping = 0;
-            _rb.AddForce(Physics.gravity * gravityMultiplier, ForceMode.Acceleration);
-        }
 
-        HandleMovement();
-    }   
-
-    void HandleMovement()
-    {
-        Vector3 movementVector = ((new Vector3(_cam.transform.forward.x, 0f, _cam.transform.forward.z) * _moveInput.y) + (_cam.transform.right * _moveInput.x)) * _currentSpeed;
-        if (!isGrounded) movementVector *= 0.6f;
-        _rb.linearVelocity = new Vector3(movementVector.x, _rb.linearVelocity.y, movementVector.z);
-
-        if (_moveInput != Vector2.zero)
-        {
-            Quaternion targetRot = Quaternion.LookRotation(movementVector);
-            _player.transform.rotation = Quaternion.Slerp(_player.transform.rotation, targetRot, Time.fixedDeltaTime * 10f);
-        }
-
-        if (isGrounded)
-        {
             RaycastHit hit;
             if (Physics.Raycast(_player.transform.position + Vector3.up * 0.1f, Vector3.down, out hit, _stepOffset + 0.2f))
             {
@@ -89,7 +71,30 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            _rb.linearDamping = 0;
+            _rb.AddForce(Physics.gravity * gravityMultiplier, ForceMode.Acceleration);
+        }
 
+        if (canMove)
+        {
+            HandleMovement();
+        }
+    }
+
+
+    void HandleMovement()
+    {
+        Vector3 movementVector = ((new Vector3(_cam.transform.forward.x, 0f, _cam.transform.forward.z) * _moveInput.y) + (_cam.transform.right * _moveInput.x)) * _currentSpeed;
+        if (!isGrounded) movementVector *= 0.6f;
+        _rb.linearVelocity = new Vector3(movementVector.x, _rb.linearVelocity.y, movementVector.z);
+
+        if (_moveInput != Vector2.zero)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(movementVector);
+            _player.transform.rotation = Quaternion.Slerp(_player.transform.rotation, targetRot, Time.fixedDeltaTime * 10f);
+        }
 
         _animator.SetBool("Walking", _moveInput != Vector2.zero);
     }
