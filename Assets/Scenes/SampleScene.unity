@@ -4763,10 +4763,11 @@ MonoBehaviour:
   _stickToGroundForce: 50
   _jumpHeight: 13
   _playerHeight: 0
-  _jumpCooldown: 1
+  _jumpCooldown: 0.5
   gravityMultiplier: 3
   isGrounded: 0
   onJumpCooldown: 0
+  canMove: 0
 --- !u!114 &1066452446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4813,7 +4814,7 @@ MonoBehaviour:
   _closedUmbrella: {fileID: 919132149155446097, guid: 986fd6178bef7a54e90d77e06fe2dc95, type: 3}
   _heightToUseAerialMoves: 3
   _aerialSlamSpeed: 20
-  _canUseAerialMoves: 0
+  _attackNudgeAmount: 200
   blockAction:
     m_Name: Block
     m_Type: 0
@@ -4824,6 +4825,7 @@ MonoBehaviour:
     m_SingletonActionBindings: []
     m_Flags: 0
   umbrellaState: 0
+  attackTime: 1.2
 --- !u!114 &1066452448
 MonoBehaviour:
   m_ObjectHideFlags: 0
