@@ -86,7 +86,8 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleMovement()
     {
-        Vector3 movementVector = ((new Vector3(_cam.transform.forward.x, 0f, _cam.transform.forward.z) * _moveInput.y) + (_cam.transform.right * _moveInput.x)) * _currentSpeed;
+        Vector3 projectedForward = Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized;
+        Vector3 movementVector = ((new Vector3(projectedForward.x, 0f, projectedForward.z) * _moveInput.y) + (_cam.transform.right * _moveInput.x)) * _currentSpeed;
         if (!isGrounded) movementVector *= 0.6f;
         _rb.linearVelocity = new Vector3(movementVector.x, _rb.linearVelocity.y, movementVector.z);
 
