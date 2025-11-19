@@ -85,6 +85,8 @@ public class UmbrellaManager : MonoBehaviour
             }
 
             _movement.SetPlayerRotationToCameraRotation(Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized);
+
+            _movement.isGliding = _movement.isFalling;
         }
         else
         {
@@ -95,6 +97,8 @@ public class UmbrellaManager : MonoBehaviour
                 _movement.RemoveSpeedMultiplier("umbrella");
                 _animator.SetBool("Blocking", false);
             }
+
+            _movement.isGliding = false;
         }
     }
 

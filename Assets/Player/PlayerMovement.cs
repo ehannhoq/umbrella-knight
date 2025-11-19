@@ -28,11 +28,13 @@ public class PlayerMovement : MonoBehaviour
     float _linearDampening;
 
     public float gravityMultiplier;
+    public float glidingMultiplier;
     public bool isGrounded;
     public bool onJumpCooldown;
     public bool canMove;
     public bool isAscending;
     public bool isFalling;
+    public bool isGliding;
     public float ascendingFallingThreshold;
 
     void Start()
@@ -77,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             _rb.linearDamping = 0;
-            _rb.AddForce(Physics.gravity * gravityMultiplier, ForceMode.Acceleration);
+            _rb.AddForce(Physics.gravity * (isGliding ? glidingMultiplier : gravityMultiplier), ForceMode.Acceleration);
         }
 
         isAscending = _rb.linearVelocity.y > ascendingFallingThreshold;
@@ -85,6 +87,7 @@ public class PlayerMovement : MonoBehaviour
 
         _animator.SetBool("Ascending", isAscending);
         _animator.SetBool("Falling", isFalling);
+        _animator.SetBool("Gliding", isGliding);
 
 
         if (canMove)
