@@ -17,7 +17,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _stickToGroundForce = 10f;
     [SerializeField] float _jumpHeight;
     [SerializeField] float _playerHeight;
-    [SerializeField] float ascendingFallingThreshold;
 
     [Tooltip("In Seconds")]
     [SerializeField] float _jumpCooldown;
@@ -32,6 +31,9 @@ public class PlayerMovement : MonoBehaviour
     public bool isGrounded;
     public bool onJumpCooldown;
     public bool canMove;
+    public bool isAscending;
+    public bool isFalling;
+    public float ascendingFallingThreshold;
 
     void Start()
     {
@@ -78,8 +80,11 @@ public class PlayerMovement : MonoBehaviour
             _rb.AddForce(Physics.gravity * gravityMultiplier, ForceMode.Acceleration);
         }
 
-        _animator.SetBool("Ascending", _rb.linearVelocity.y > ascendingFallingThreshold);
-        _animator.SetBool("Falling", _rb.linearVelocity.y < -ascendingFallingThreshold);
+        isAscending = _rb.linearVelocity.y > ascendingFallingThreshold;
+        isFalling = _rb.linearVelocity.y < -ascendingFallingThreshold;
+
+        _animator.SetBool("Ascending", isAscending);
+        _animator.SetBool("Falling", isFalling);
 
 
         if (canMove)

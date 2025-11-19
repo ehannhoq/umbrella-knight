@@ -65,7 +65,8 @@ public class UmbrellaManager : MonoBehaviour
 
     void Update()
     {
-        if (blockAction.IsPressed())
+        bool canBlock = _movement.isGrounded || _movement.isFalling;
+        if (blockAction.IsPressed() && canBlock)
         {
             if (umbrellaState == UmbrellaState.Closed)
             {
