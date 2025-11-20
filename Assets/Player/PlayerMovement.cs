@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
 {
     public static Action playerJumped;
     [SerializeField] private float _movementSpeed;
+    [SerializeField] private LayerMask wallLayer;
     [SerializeField] private Dictionary<string, float> _movementSpeedMultipliers;
     [SerializeField] private float _stepOffset = 0.5f;
     [SerializeField] private float _stickToGroundForce = 10f;
@@ -103,6 +104,9 @@ public class PlayerMovement : MonoBehaviour
         Vector3 projectedForward = Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized;
         Vector3 movementVector = ((new Vector3(projectedForward.x, 0f, projectedForward.z) * _moveInput.y) + (_cam.transform.right * _moveInput.x)) * _currentSpeed;
         if (!isGrounded) movementVector *= 0.6f;
+
+        movementVector = AdjustForWall(movementVector);
+
         _rb.linearVelocity = new Vector3(movementVector.x, _rb.linearVelocity.y, movementVector.z);
 
         if (_moveInput != Vector2.zero)
@@ -111,6 +115,24 @@ public class PlayerMovement : MonoBehaviour
         }
 
         _animator.SetBool("Walking", _moveInput != Vector2.zero);
+    }
+
+    Vector3 AdjustForWall(Vector3 direction)
+    {
+        if (Physics.CapsuleCast(
+            _player.transform.position + Vector3.up * 0.2f,
+            _player.transform.position + Vector3.up * (_playerHeight - 0.2f),
+            0.3f,
+            direction.normalized,
+            out RaycastHit hit,
+            0.25f,
+            wallLayer
+        ))
+        {
+            return Vector3.ProjectOnPlane(direction, hit.normal);
+        }
+
+        return direction;
     }
 
     public void SetPlayerRotationToCameraRotation(Vector3 lookVector, bool slerp = false)
