@@ -10,7 +10,6 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     public static Action playerJumped;
-    [SerializeField] Rigidbody _rb;
     [SerializeField] private float _movementSpeed;
     [SerializeField] private Dictionary<string, float> _movementSpeedMultipliers;
     [SerializeField] private float _stepOffset = 0.5f;
@@ -20,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Tooltip("In Seconds")]
     [SerializeField] float _jumpCooldown;
+    Rigidbody _rb;
     float _currentSpeed;
     GameObject _player;
     GameObject _cam;
@@ -40,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         _player = GameObject.FindWithTag("Player");
+        _rb = _player.GetComponent<Rigidbody>();
         _cam = GameObject.FindWithTag("MainCamera");
         _animator = _player.GetComponent<Animator>();
         _movementSpeedMultipliers = new Dictionary<string, float>();
