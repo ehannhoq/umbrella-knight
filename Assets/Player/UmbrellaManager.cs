@@ -65,15 +65,23 @@ public class UmbrellaManager : MonoBehaviour
 
     void Update()
     {
-        bool canBlock = _movement.isGrounded || _movement.isFalling;
+        bool canBlock = _movement.isGrounded || _movement.isFalling || _movement.isGliding;
         if (blockAction.IsPressed() && canBlock)
         {
+            if (!_movement.isGrounded && !_movement.isAscending)
+                _movement.isGliding = true;
+            else
+                _movement.isGliding = false;
+
+
             if (umbrellaState == UmbrellaState.Closed)
             {
                 umbrellaState = UmbrellaState.Open;
                 UpdateUmbrella(_openUmbrella);
-                _movement.AddSpeedMultiplier("umbrella", 0.5f);
                 _animator.SetBool("Blocking", true);
+
+                if (!_movement.isGliding)
+                    _movement.AddSpeedMultiplier("umbrella", 0.5f);
 
                 if (_resetAttackCoroutine != null)
                 {
@@ -86,7 +94,7 @@ public class UmbrellaManager : MonoBehaviour
 
             _movement.SetPlayerRotationToCameraRotation(Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized);
 
-            _movement.isGliding = _movement.isFalling;
+
         }
         else
         {

@@ -56,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // Debug.DrawRay(player.transform.position, -player.transform.up * 0.1f, Color.red, 1f, false);
 
-        isGrounded = Math.Abs(_rb.linearVelocity.y) < 0.001f || Physics.Raycast(_player.transform.position, -_player.transform.up, 0.1f);
+        isGrounded = Physics.Raycast(_player.transform.position, -_player.transform.up, 0.1f);
 
         if (isGrounded)
         {
@@ -94,8 +94,6 @@ public class PlayerMovement : MonoBehaviour
         {
             HandleMovement();
         }
-
-
     }
 
 
@@ -140,7 +138,8 @@ public class PlayerMovement : MonoBehaviour
 
     public void RemoveSpeedMultiplier(string source)
     {
-        _movementSpeedMultipliers.Remove(source);
+        if (_movementSpeedMultipliers.ContainsKey(source))
+            _movementSpeedMultipliers.Remove(source);
     }
 
     public void OnMove(InputValue action)
