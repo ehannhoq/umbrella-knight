@@ -87,6 +87,7 @@ public class UmbrellaManager : MonoBehaviour
                 {
                     _attackPhase = 0;
                     _movement.canMove = true;
+                    StopCoroutine(_resetAttackCoroutine);
                     _resetAttackCoroutine = null;
                     _animator.SetTrigger("ResetAttack");
                 }
