@@ -13,7 +13,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _movementSpeed;
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private Dictionary<string, float> _movementSpeedMultipliers;
-    [SerializeField] private float _stepOffset = 0.5f;
+    [SerializeField] private float _maxStepHeight = 0.5f;
+    [SerializeField] private float _minStepHeight = 0.5f;
+
     [SerializeField] private float _stickToGroundForce = 10f;
     [SerializeField] float _jumpHeight;
     [SerializeField] float _playerHeight;
@@ -38,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
     public bool isGliding;
     public float ascendingFallingThreshold;
 
+
     void Start()
     {
         _player = GameObject.FindWithTag("Player");
@@ -58,17 +61,17 @@ public class PlayerMovement : MonoBehaviour
     {
         // Debug.DrawRay(player.transform.position, -player.transform.up * 0.1f, Color.red, 1f, false);
 
-        isGrounded = Physics.Raycast(_player.transform.position, -_player.transform.up, 0.1f);
+        isGrounded = Physics.Raycast(_player.transform.position, -_player.transform.up, _minStepHeight + 0.2f);
 
         if (isGrounded)
         {
             _rb.linearDamping = _linearDampening;
 
             RaycastHit hit;
-            if (Physics.Raycast(_player.transform.position + Vector3.up * 0.1f, Vector3.down, out hit, _stepOffset + 0.2f))
+            if (Physics.Raycast(_player.transform.position + Vector3.up * 0.1f, Vector3.down, out hit, _minStepHeight + 0.2f))
             {
                 float stepDifference = hit.point.y - _player.transform.position.y;
-                if (stepDifference > 0f && stepDifference <= _stepOffset)
+                if (stepDifference > 0f && stepDifference <= _minStepHeight)
                 {
                     _rb.MovePosition(new Vector3(_player.transform.position.x, hit.point.y, _player.transform.position.z));
                 }
@@ -105,6 +108,8 @@ public class PlayerMovement : MonoBehaviour
         Vector3 movementVector = ((new Vector3(projectedForward.x, 0f, projectedForward.z) * _moveInput.y) + (_cam.transform.right * _moveInput.x)) * _currentSpeed;
         if (!isGrounded) movementVector *= 0.6f;
 
+        Step(movementVector);
+        movementVector = AdjustForSlope(movementVector);
         movementVector = AdjustForWall(movementVector);
 
         _rb.linearVelocity = new Vector3(movementVector.x, _rb.linearVelocity.y, movementVector.z);
@@ -116,6 +121,42 @@ public class PlayerMovement : MonoBehaviour
 
         _animator.SetBool("Walking", _moveInput != Vector2.zero);
     }
+
+
+    void Step(Vector3 direction)
+    {
+        if (direction.sqrMagnitude < 0.001f || !isGrounded) return;
+        Vector3 lower = _player.transform.position;
+        Vector3 upper = _player.transform.position + Vector3.up * _maxStepHeight;
+
+
+        if (Physics.Raycast(lower, direction.normalized, out RaycastHit hit, 0.75f))
+        {
+
+            if (Vector3.Dot(hit.normal, Vector3.up) > 0.1f) return;
+
+
+            if (!Physics.Raycast(upper, direction.normalized, 0.75f))
+            {
+                float stepHeight = hit.collider.bounds.max.y - _player.transform.position.y;
+                if (stepHeight < 0.1f) return;
+
+                stepHeight = Mathf.Clamp(stepHeight, 0f, _maxStepHeight);
+                _player.transform.position += new Vector3(0f, stepHeight, 0f);
+            }
+        }
+    }
+
+
+    Vector3 AdjustForSlope(Vector3 direction)
+    {
+        if (direction.sqrMagnitude < 0.001f || !isGrounded) return direction;
+
+        Physics.Raycast(_player.transform.position, Vector3.down, out RaycastHit hit, 0.75f);
+
+        return Vector3.ProjectOnPlane(direction, hit.normal);
+    }
+
 
     Vector3 AdjustForWall(Vector3 direction)
     {
@@ -140,6 +181,7 @@ public class PlayerMovement : MonoBehaviour
         return direction;
     }
 
+
     public void SetPlayerRotationToCameraRotation(Vector3 lookVector, bool slerp = false)
     {
         Quaternion targetRot = Quaternion.LookRotation(lookVector);
@@ -150,6 +192,7 @@ public class PlayerMovement : MonoBehaviour
             _player.transform.rotation = targetRot;
     }
 
+
     void Update()
     {
         float cummilativeSpeedMultiplier = 1f;
@@ -159,10 +202,12 @@ public class PlayerMovement : MonoBehaviour
         _currentSpeed = _movementSpeed * cummilativeSpeedMultiplier;
     }
 
+
     public void AddSpeedMultiplier(string source, float multiplier)
     {
         _movementSpeedMultipliers.Add(source, multiplier);
     }
+
 
     public void RemoveSpeedMultiplier(string source)
     {
@@ -170,10 +215,12 @@ public class PlayerMovement : MonoBehaviour
             _movementSpeedMultipliers.Remove(source);
     }
 
+
     public void OnMove(InputValue action)
     {
         _moveInput = action.Get<Vector2>();
     }
+
 
     public void OnJump()
     {
@@ -185,6 +232,7 @@ public class PlayerMovement : MonoBehaviour
             StartCoroutine(ResetJump());
         }
     }
+
 
     IEnumerator ResetJump()
     {
