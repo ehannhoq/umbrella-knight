@@ -1,9 +1,2 @@
-CameraController.cs/PlayerMovement.cs:
-    Fix Camera jittering when player is moving backwards
-
-PlayerMovement.cs:
-    Add ability to slide on any vertical object
-
 In General:
     Increase all wall box collider sizes.
-    (Maybe) add 'Wall' layer mask to all wall prefabs. (Might get right of this in favor of second TODO)
