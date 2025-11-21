@@ -119,17 +119,22 @@ public class PlayerMovement : MonoBehaviour
 
     Vector3 AdjustForWall(Vector3 direction)
     {
+
+        Vector3 p1 = _player.transform.position + Vector3.up * (_playerHeight / 2f - 0.2f);
+        Vector3 p2 = _player.transform.position + Vector3.up * (_playerHeight / 2f + 0.2f);
+
         if (Physics.CapsuleCast(
-            _player.transform.position + Vector3.up * 0.2f,
-            _player.transform.position + Vector3.up * (_playerHeight - 0.2f),
+            p1, p2,
             0.3f,
             direction.normalized,
             out RaycastHit hit,
-            0.25f,
-            wallLayer
+            0.175f
         ))
         {
-            return Vector3.ProjectOnPlane(direction, hit.normal);
+            Vector3 horizontalNormal = hit.normal;
+            horizontalNormal.y = 0f;
+            horizontalNormal = horizontalNormal.normalized;
+            return Vector3.ProjectOnPlane(direction, horizontalNormal);
         }
 
         return direction;
