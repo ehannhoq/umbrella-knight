@@ -23,14 +23,15 @@ public class UmbrellaManager : MonoBehaviour
     PlayerMovement _movement;
     Animator _animator;
     GameObject _goUmbrella;
-    bool _canUseAerialMoves;
     int _attackPhase;
     Coroutine _resetAttackCoroutine;
     bool _inAttackAnimation;
+    bool _inAerialAttack;
 
     public InputAction blockAction;
     public UmbrellaState umbrellaState;
     public float attackTime;
+    public float heightOffGround;
 
 
     void OnEnable()
@@ -60,7 +61,8 @@ public class UmbrellaManager : MonoBehaviour
     void FixedUpdate()
     {
         int playerMask = ~LayerMask.GetMask("Player");
-        _canUseAerialMoves = !Physics.Raycast(_player.transform.position, -_player.transform.up, _heightToUseAerialMoves, playerMask);
+        Physics.Raycast(_player.transform.position, -_player.transform.up, out RaycastHit hit, 100, playerMask);
+        heightOffGround = _player.transform.position.y - hit.point.y;
     }
 
     void Update()
@@ -117,7 +119,7 @@ public class UmbrellaManager : MonoBehaviour
 
         if (_inAttackAnimation) return;
 
-        if (_canUseAerialMoves)
+        if (heightOffGround >= _heightToUseAerialMoves)
         {
             OnAerialAttack();
             return;
@@ -152,9 +154,9 @@ public class UmbrellaManager : MonoBehaviour
         }
     }
 
-    IEnumerator ResetMovement()
+    IEnumerator ResetMovement(float duration = 0f)
     {
-        yield return new WaitForSeconds(attackTime);
+        yield return new WaitForSeconds(duration <= 0 ? attackTime : duration);
 
         _attackPhase = 0;
         _movement.canMove = true;
@@ -171,7 +173,22 @@ public class UmbrellaManager : MonoBehaviour
 
     void OnAerialAttack()
     {
+        if (_inAerialAttack) return;
+
+        _inAerialAttack = true;
         _rb.linearVelocity = new Vector3(0f, -_aerialSlamSpeed, 0f);
+        _animator.SetTrigger("AerialAttack");
+        StartCoroutine(WaitForGround());
+    }
+
+    IEnumerator WaitForGround()
+    {
+        yield return new WaitUntil(() => heightOffGround <= 5f);
+
+        _inAerialAttack = false;
+        _animator.SetTrigger("AerialSlam");
+        _movement.canMove = false;
+        _resetAttackCoroutine = StartCoroutine(ResetMovement(1f));
     }
 
     public void OnParry()
