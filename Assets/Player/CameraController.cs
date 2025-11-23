@@ -5,9 +5,13 @@ using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
-    GameObject _cam;
+    Camera _cam;
     GameObject _player;
+    Rigidbody _rb;
     Vector2 _lookVec;
+    float _baseFOV;
+    [SerializeField] float _maxFOV;
+    [SerializeField] float _velocityThreshold;
     // Vector3 lockOnPos;
 
     public static bool cameraLock = false;
@@ -18,11 +22,32 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
-        _cam = GameObject.FindWithTag("MainCamera");
+        _cam = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
         _player = GameObject.FindWithTag("Player");
+        _rb = _player.GetComponent<Rigidbody>();
+
+        _baseFOV = _cam.fieldOfView;
 
         Cursor.lockState = CursorLockMode.Locked;
     }
+
+    void FixedUpdate()
+    {
+        float velocity = _rb.linearVelocity.magnitude;
+
+        if (velocity < _velocityThreshold) 
+        {
+            _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, _baseFOV, 0.25f);
+            return;
+        }
+
+        float fovDiff = _maxFOV - _baseFOV;
+
+        float fov = _baseFOV + (fovDiff * ((velocity - _velocityThreshold) / 50f));
+
+        _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, fov, 0.25f);
+    }
+
 
     void Update()
     {
@@ -44,13 +69,14 @@ public class CameraController : MonoBehaviour
         }
     }
 
+
     private void UpdatePosition()
     {
         int layerMask = ~LayerMask.GetMask("Player");
         Vector3 lookAtPos = _player.transform.position + offset;
 
         if (Physics.Raycast(lookAtPos, -_cam.transform.forward, out RaycastHit info, cameraDistance, layerMask))
-        {                
+        {
             float collisionOffset = 0.2f;
 
             float newDistance = info.distance - collisionOffset;
@@ -63,7 +89,6 @@ public class CameraController : MonoBehaviour
             _cam.transform.position = lookAtPos - _cam.transform.forward * cameraDistance;
         }
     }
-
 
 
     public void OnLook(InputValue action)
