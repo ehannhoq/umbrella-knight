@@ -5189,7 +5189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boost: 3
-  jumpBoost: 3
+  jumpBoost: 2
   inWindDash: 0
 --- !u!114 &1066452448
 MonoBehaviour:
@@ -5205,8 +5205,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _openUmbrella: {fileID: 919132149155446097, guid: 3a66f9dd423b8423fa11aaed066ad6a7, type: 3}
   _closedUmbrella: {fileID: 919132149155446097, guid: 986fd6178bef7a54e90d77e06fe2dc95, type: 3}
-  _heightToUseAerialMoves: 1
-  _aerialSlamSpeed: 100
+  _heightToUseAerialMoves: 5
+  _aerialSlamSpeed: 20
   _attackNudgeAmount: 100
   blockAction:
     m_Name: Block

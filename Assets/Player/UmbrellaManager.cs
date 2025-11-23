@@ -183,7 +183,7 @@ public class UmbrellaManager : MonoBehaviour
 
     IEnumerator WaitForGround()
     {
-        yield return new WaitUntil(() => heightOffGround <= 5f);
+        yield return new WaitUntil(() => heightOffGround <= 10f);
 
         _inAerialAttack = false;
         _animator.SetTrigger("AerialSlam");
