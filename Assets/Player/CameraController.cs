@@ -8,11 +8,14 @@ public class CameraController : MonoBehaviour
     Camera _cam;
     GameObject _player;
     Rigidbody _rb;
-    Vector2 _lookVec;
+    public Vector2 _lookVec;
     float _baseFOV;
     [SerializeField] float _maxFOV;
     [SerializeField] float _velocityThreshold;
     // Vector3 lockOnPos;
+
+    public float xSensitivity;
+    public float ySensitivity;
 
     public static bool cameraLock = false;
     public float cameraDistance;
@@ -59,8 +62,8 @@ public class CameraController : MonoBehaviour
     {
         if (_lookVec != Vector2.zero)
         {
-            yaw += _lookVec.x;
-            pitch -= _lookVec.y;
+            yaw += _lookVec.x * xSensitivity * Time.deltaTime;
+            pitch -= _lookVec.y * xSensitivity * Time.deltaTime;
 
             pitch = Math.Clamp(pitch, -40f, 80f);
             yaw = yaw % 360;
