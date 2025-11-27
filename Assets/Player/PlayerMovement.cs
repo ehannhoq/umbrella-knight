@@ -5,20 +5,26 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private enum WallRideDirection : int
+    {
+        None,
+        Left,
+        Right
+    }
     public static Action playerJumped;
+    [SerializeField] float _playerHeight;
     [SerializeField] private float _movementSpeed;
-    [SerializeField] private LayerMask wallLayer;
     [SerializeField] private Dictionary<string, float> _movementSpeedMultipliers;
     [SerializeField] private float _maxStepHeight = 0.5f;
     [SerializeField] private float _minStepHeight = 0.5f;
-
     [SerializeField] private float _stickToGroundForce = 10f;
+
     [SerializeField] float _jumpHeight;
-    [SerializeField] float _playerHeight;
 
     [Tooltip("In Seconds")]
     [SerializeField] float _jumpCooldown;
@@ -29,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
     Vector2 _moveInput;
     Animator _animator;
     float _linearDampening;
+    [SerializeField] int _wallRiding;
+    [SerializeField] float _wallRideGravity;
 
     public float gravityMultiplier;
     public float glidingMultiplier;
@@ -61,7 +69,11 @@ public class PlayerMovement : MonoBehaviour
     {
         // Debug.DrawRay(player.transform.position, -player.transform.up * 0.1f, Color.red, 1f, false);
 
-        isGrounded = Physics.Raycast(_player.transform.position, -_player.transform.up, _minStepHeight + 0.2f);
+        isGrounded = Physics.CheckSphere(
+            _player.transform.position,
+            0.25f,
+            ~LayerMask.GetMask("Player")
+        );
 
         if (isGrounded)
         {
@@ -83,16 +95,24 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            _rb.linearDamping = 0;
-            _rb.AddForce(Physics.gravity * (isGliding ? glidingMultiplier : gravityMultiplier), ForceMode.Acceleration);
+            _rb.linearDamping = 1;
+
+            Vector3 gravity = Physics.gravity;
+
+            if (isGliding) gravity *= glidingMultiplier;
+            else if (_wallRiding != 0) gravity *= _wallRideGravity;
+            else gravity *= gravityMultiplier;
+
+            _rb.AddForce(gravity, ForceMode.Acceleration);
         }
 
         isAscending = _rb.linearVelocity.y > ascendingFallingThreshold;
         isFalling = _rb.linearVelocity.y < -ascendingFallingThreshold;
 
         _animator.SetBool("Ascending", isAscending);
+        _animator.SetBool("Grounded", isGrounded);
         _animator.SetBool("Falling", isFalling);
-        _animator.SetBool("Gliding", isGliding);
+        _animator.SetInteger("WallRide", _wallRiding);
 
 
         if (canMove)
@@ -104,20 +124,24 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleMovement()
     {
-        Vector3 projectedForward = Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized;
-        Vector3 movementVector = ((new Vector3(projectedForward.x, 0f, projectedForward.z) * _moveInput.y) + (_cam.transform.right * _moveInput.x)) * _currentSpeed;
-        if (!isGrounded) movementVector *= 0.6f;
-
-        Step(movementVector);
-        movementVector = AdjustForSlope(movementVector);
-        movementVector = AdjustForWall(movementVector);
-
-        _rb.linearVelocity = new Vector3(movementVector.x, _rb.linearVelocity.y, movementVector.z);
-
         if (_moveInput != Vector2.zero)
         {
+            Vector3 projectedForward = Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized;
+            Vector3 movementVector = ((new Vector3(projectedForward.x, 0f, projectedForward.z) * _moveInput.y) + (_cam.transform.right * _moveInput.x)) * _currentSpeed;
+            if (!isGrounded) movementVector *= 0.6f;
+
+            Step(movementVector);
+            movementVector = AdjustForSlope(movementVector);
+            movementVector = AdjustForWall(movementVector);
+
+            movementVector -= new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
+
+            _rb.AddForce(movementVector, isGrounded ? ForceMode.Impulse : ForceMode.Acceleration);
+
             SetPlayerRotationToCameraRotation(movementVector, slerp: true);
         }
+
+        CheckForWallRide();
 
         _animator.SetBool("Walking", _moveInput != Vector2.zero);
     }
@@ -175,10 +199,57 @@ public class PlayerMovement : MonoBehaviour
             Vector3 horizontalNormal = hit.normal;
             horizontalNormal.y = 0f;
             horizontalNormal = horizontalNormal.normalized;
-            return Vector3.ProjectOnPlane(direction, horizontalNormal);
+
+            Vector3 newDirection = Vector3.ProjectOnPlane(direction, horizontalNormal);
+
+            if (_wallRiding != 0)
+                newDirection = newDirection.normalized * direction.magnitude;
+
+            return newDirection;
         }
 
         return direction;
+    }
+
+    void CheckForWallRide()
+    {
+        if (isGrounded || _rb.linearVelocity.sqrMagnitude <= _movementSpeed * _movementSpeed)
+        {
+            _wallRiding = (int)WallRideDirection.None;
+            return;
+        }
+
+        Vector3 p1 = _player.transform.position + Vector3.up * (_playerHeight / 2f - 0.2f);
+
+        Vector3 right = _cam.transform.right;
+        Vector3 left = -right;
+
+        _wallRiding = (int)WallRideDirection.None;
+
+        if (GetWallHit(p1, right, 0.4f, out RaycastHit rightHit))
+        {
+            float vertical = Vector3.Dot(rightHit.normal, Vector3.up);
+            if (vertical < 0.1f)
+                _wallRiding = (int)WallRideDirection.Right;
+        }
+
+        if (GetWallHit(p1, left, 0.4f, out RaycastHit leftHit))
+        {
+            float vertical = -Vector3.Dot(leftHit.normal, Vector3.up);
+            if (vertical < 0.1f)
+                _wallRiding = (int)WallRideDirection.Left;
+        }
+    }
+
+    bool GetWallHit(Vector3 p1, Vector3 direction, float maxDistance, out RaycastHit hit)
+    {
+        if (Physics.Raycast(p1, direction, out RaycastHit h, maxDistance))
+        {
+            hit = h;
+            return true;
+        }
+        hit = new RaycastHit();
+        return false;
     }
 
 
@@ -202,6 +273,65 @@ public class PlayerMovement : MonoBehaviour
         _currentSpeed = _movementSpeed * cummilativeSpeedMultiplier;
     }
 
+    public void OnMove(InputValue action)
+    {
+        _moveInput = action.Get<Vector2>();
+    }
+
+
+    public void OnJump()
+    {
+        if (!onJumpCooldown)
+        {
+            onJumpCooldown = true;
+            if (isGrounded)
+            {
+                _rb.AddForce(_rb.transform.up * _jumpHeight, ForceMode.Impulse);
+            }
+            else if (_wallRiding != 0)
+            {
+                Vector3 p1 = _player.transform.position + Vector3.up * (_playerHeight / 2f - 0.2f);
+                Vector3 dir;
+
+                if (_wallRiding == (int)WallRideDirection.Right)
+                    dir = _cam.transform.right;
+                else
+                    dir = -_cam.transform.right;
+
+                GetWallHit(p1, dir, 0.4f, out RaycastHit hit);
+
+                Vector3 axis = Quaternion.AngleAxis(90f, Vector3.up) * hit.normal;
+                Quaternion rot = Quaternion.AngleAxis(-45f, axis);
+
+                Vector3 jumpVector = (rot * hit.normal).normalized * _jumpHeight;
+
+                _rb.AddForce(jumpVector, ForceMode.Impulse);
+
+                Debug.DrawLine(_player.transform.position, _player.transform.position + jumpVector, Color.yellow);
+
+            }
+            playerJumped.Invoke();
+            StartCoroutine(ResetJump());
+        }
+    }
+
+    IEnumerator WallJump(Vector3 jumpVector)
+    {
+        int duration = 4;
+        while (duration > 0)
+        {
+            yield return new WaitForFixedUpdate();
+            duration--;
+            _rb.AddForce(jumpVector * 10f, ForceMode.Acceleration);
+            jumpVector.y *= 0.5f;
+        }
+    }
+
+    IEnumerator ResetJump()
+    {
+        yield return new WaitForSeconds(_jumpCooldown);
+        onJumpCooldown = false;
+    }
 
     public void AddSpeedMultiplier(string source, float multiplier)
     {
@@ -213,30 +343,5 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_movementSpeedMultipliers.ContainsKey(source))
             _movementSpeedMultipliers.Remove(source);
-    }
-
-
-    public void OnMove(InputValue action)
-    {
-        _moveInput = action.Get<Vector2>();
-    }
-
-
-    public void OnJump()
-    {
-        if (!onJumpCooldown && isGrounded)
-        {
-            onJumpCooldown = true;
-            _rb.AddForce(_rb.transform.up * _jumpHeight, ForceMode.VelocityChange);
-            playerJumped.Invoke();
-            StartCoroutine(ResetJump());
-        }
-    }
-
-
-    IEnumerator ResetJump()
-    {
-        yield return new WaitForSeconds(_jumpCooldown);
-        onJumpCooldown = false;
     }
 }

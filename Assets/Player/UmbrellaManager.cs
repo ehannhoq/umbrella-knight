@@ -28,6 +28,7 @@ public class UmbrellaManager : MonoBehaviour
     bool _inAttackAnimation;
     bool _inAerialAttack;
 
+    public bool blocking;
     public InputAction blockAction;
     public UmbrellaState umbrellaState;
     public float attackTime;
@@ -67,7 +68,8 @@ public class UmbrellaManager : MonoBehaviour
 
     void Update()
     {
-        bool canBlock = _movement.isGrounded || _movement.isFalling || _movement.isGliding;
+        bool canBlock = _movement.isGrounded || _rb.linearVelocity.y < 0;
+
         if (blockAction.IsPressed() && canBlock)
         {
             if (!_movement.isGrounded && !_movement.isAscending)
@@ -76,11 +78,12 @@ public class UmbrellaManager : MonoBehaviour
                 _movement.isGliding = false;
 
 
+
             if (umbrellaState == UmbrellaState.Closed)
             {
                 umbrellaState = UmbrellaState.Open;
                 UpdateUmbrella(_openUmbrella);
-                _animator.SetBool("Blocking", true);
+                blocking = true;
 
                 if (!_movement.isGliding)
                     _movement.AddSpeedMultiplier("umbrella", 0.5f);
@@ -96,8 +99,6 @@ public class UmbrellaManager : MonoBehaviour
             }
 
             _movement.SetPlayerRotationToCameraRotation(Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized);
-
-
         }
         else
         {
@@ -106,11 +107,19 @@ public class UmbrellaManager : MonoBehaviour
                 umbrellaState = UmbrellaState.Closed;
                 UpdateUmbrella(_closedUmbrella);
                 _movement.RemoveSpeedMultiplier("umbrella");
-                _animator.SetBool("Blocking", false);
+                blocking = false;
             }
 
             _movement.isGliding = false;
         }
+
+
+        _animator.SetBool("Gliding", _movement.isGliding);
+
+        if (!_movement.isGliding)
+            _animator.SetBool("Blocking", blocking);
+        else
+            _animator.SetBool("Blocking", false);
     }
 
     public void OnAttack()
