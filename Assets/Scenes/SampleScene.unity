@@ -1693,6 +1693,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 880998092855049457, guid: ae3d6dec92e33d749bc17c5f8cf0f0a9, type: 3}
   m_PrefabInstance: {fileID: 909886723}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &443552106
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 655610300, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
+      propertyPath: m_Name
+      value: Stairs_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 573315861994777811, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8.77
+      objectReference: {fileID: 0}
+    - target: {fileID: 573315861994777811, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.045105457
+      objectReference: {fileID: 0}
+    - target: {fileID: 573315861994777811, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 89.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 573315861994777811, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 573315861994777811, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 573315861994777811, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 573315861994777811, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 573315861994777811, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 573315861994777811, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 573315861994777811, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fdd45e0392ccac049a8608445fad7343, type: 3}
 --- !u!1001 &467445749
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3997,8 +4054,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 604cee0be52a34d9e9ca7aee925fc4af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boost: 3
-  jumpBoost: 2
+  boost: 100
+  jumpBoost: 50
   inWindDash: 0
 --- !u!114 &1066452448
 MonoBehaviour:
@@ -4014,21 +4071,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _openUmbrella: {fileID: 919132149155446097, guid: 3a66f9dd423b8423fa11aaed066ad6a7, type: 3}
   _closedUmbrella: {fileID: 919132149155446097, guid: 986fd6178bef7a54e90d77e06fe2dc95, type: 3}
-  _heightToUseAerialMoves: 5
-  _aerialSlamSpeed: 20
-  _attackNudgeAmount: 100
+  _heightToUseAerialMoves: 20
+  _aerialSlamSpeed: 10
+  _attackNudgeAmount: 6
   blocking: 0
   blockAction:
     m_Name: Block
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: ad469c6d-f82f-4fec-bcf5-850f8df4959a
+    m_Id: 42405486-db39-412c-9a80-7a5a05ec5c97
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
     m_Flags: 0
   umbrellaState: 0
-  attackTime: 0.8
+  attackTime: 0.7
   heightOffGround: 0
 --- !u!114 &1066452449
 MonoBehaviour:
@@ -4042,24 +4099,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56b2dbc5a8e264203bbda485066d3a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerHeight: 1.9
-  _movementSpeed: 15
-  _maxStepHeight: 0.5
-  _minStepHeight: 0.1
+  _movementSpeed: 12
+  _minStepHeight: 0.05
+  _maxStepHeight: 0.2
+  _minimumWallRideSpeed: 12
+  runningIntoWall: 0
+  _jumpHeight: 14
+  _jumpCooldown: 0
+  _gravity: 3
+  _glidingGravity: 0.5
+  _wallRideGravity: 1
   _stickToGroundForce: 50
-  _jumpHeight: 15
-  _jumpCooldown: 0.5
-  _wallRiding: 0
-  _wallRideGravity: 0.5
-  gravityMultiplier: 3
-  glidingMultiplier: 0.2
-  isGrounded: 0
-  onJumpCooldown: 0
+  ascendingFallingThreshold: 4
   canMove: 0
-  isAscending: 0
-  isFalling: 0
-  isGliding: 0
-  ascendingFallingThreshold: 5
+  grounded: 0
+  gliding: 0
+  ascending: 0
+  falling: 0
 --- !u!4 &1122774838 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5181878731793284187, guid: 54e723524a41147429b1d04b8adc7820, type: 3}
@@ -4543,9 +4599,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!1001 &1266824563
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9992,7 +10048,9 @@ PrefabInstance:
       value: 5x8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 762295494669561128, guid: f67ff2f9be058b44387651d8ec8ae4da, type: 3}
+    - {fileID: 3388549863664405991, guid: f67ff2f9be058b44387651d8ec8ae4da, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f67ff2f9be058b44387651d8ec8ae4da, type: 3}
@@ -10005,3 +10063,4 @@ SceneRoots:
   - {fileID: 1066452443}
   - {fileID: 97059516}
   - {fileID: 599709785}
+  - {fileID: 443552106}

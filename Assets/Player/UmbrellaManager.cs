@@ -68,14 +68,14 @@ public class UmbrellaManager : MonoBehaviour
 
     void Update()
     {
-        bool canBlock = _movement.isGrounded || _rb.linearVelocity.y < 0;
+        bool canBlock = _movement.grounded || _rb.linearVelocity.y < 0;
 
         if (blockAction.IsPressed() && canBlock)
         {
-            if (!_movement.isGrounded && !_movement.isAscending)
-                _movement.isGliding = true;
+            if (!_movement.grounded && !_movement.ascending)
+                _movement.gliding = true;
             else
-                _movement.isGliding = false;
+                _movement.gliding = false;
 
 
 
@@ -85,8 +85,8 @@ public class UmbrellaManager : MonoBehaviour
                 UpdateUmbrella(_openUmbrella);
                 blocking = true;
 
-                if (!_movement.isGliding)
-                    _movement.AddSpeedMultiplier("umbrella", 0.5f);
+                if (!_movement.gliding)
+                    // _movement.AddSpeedMultiplier("umbrella", 0.5f);
 
                 if (_resetAttackCoroutine != null)
                 {
@@ -98,7 +98,7 @@ public class UmbrellaManager : MonoBehaviour
                 }
             }
 
-            _movement.SetPlayerRotationToCameraRotation(Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized);
+            _movement.RotatePlayer(Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized);
         }
         else
         {
@@ -106,17 +106,17 @@ public class UmbrellaManager : MonoBehaviour
             {
                 umbrellaState = UmbrellaState.Closed;
                 UpdateUmbrella(_closedUmbrella);
-                _movement.RemoveSpeedMultiplier("umbrella");
+                // _movement.RemoveSpeedMultiplier("umbrella");
                 blocking = false;
             }
 
-            _movement.isGliding = false;
+            _movement.gliding = false;
         }
 
 
-        _animator.SetBool("Gliding", _movement.isGliding);
+        _animator.SetBool("Gliding", _movement.gliding);
 
-        if (!_movement.isGliding)
+        if (!_movement.gliding)
             _animator.SetBool("Blocking", blocking);
         else
             _animator.SetBool("Blocking", false);
@@ -137,7 +137,7 @@ public class UmbrellaManager : MonoBehaviour
         _inAttackAnimation = true;
 
         _movement.canMove = false;
-        _animator.SetBool("Walking", false);
+        _animator.SetBool("Moving", false);
 
         if (_resetAttackCoroutine != null)
         {

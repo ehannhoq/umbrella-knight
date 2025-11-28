@@ -8,6 +8,7 @@ public class PlayerWindMovementController : MonoBehaviour
 {
     GameObject _cam;
     Rigidbody _rb;
+    PlayerMovement _movement;
     UmbrellaManager _umbrellaManager;
     InputAction _jump;
     Coroutine _windBoostRoutine;
@@ -26,55 +27,54 @@ public class PlayerWindMovementController : MonoBehaviour
     {
         _cam = GameObject.FindWithTag("MainCamera");
         _rb = GameObject.FindWithTag("Player").GetComponent<Rigidbody>();
+        _movement = GetComponent<PlayerMovement>();
         _umbrellaManager = GetComponent<UmbrellaManager>();
         inWindDash = false;
 
-        PlayerMovement.playerJumped += () => { if (inWindDash) StartCoroutine(JumpedDuringWindBoost()); };
+        // _movement.playerJumped += () => { if (inWindDash) JumpedDuringWindBoost(); };
+
     }
 
     public void OnWindBoost()
     {
-        if (_umbrellaManager.umbrellaState == UmbrellaState.Closed) return;
+        if (_umbrellaManager.umbrellaState == UmbrellaState.Closed || !_movement.grounded) return;
 
-        _windBoostRoutine = StartCoroutine(WindBoostCoroutine());
+        _windBoostRoutine = StartCoroutine(WindBoost());
     }
 
-    IEnumerator WindBoostCoroutine()
+
+    IEnumerator WindBoost()
     {
         Vector3 projectedVector = Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized;
-        Vector3 dir = projectedVector * boost * 1000;
+        Vector3 dir = projectedVector * boost;
 
-        int duration = 10;
+        _movement.canMove = false;
+        inWindDash = true;
+
+        _rb.linearVelocity = dir;
+
+        int duration = 15;
         int timer = 0;
-
         while (timer < duration)
         {
-            _rb.AddForce(dir, ForceMode.Acceleration);
             timer++;
-            inWindDash = true;
 
             yield return new WaitForFixedUpdate();
         }
+
+        _movement.canMove = true;
         inWindDash = false;
     }
 
-    IEnumerator JumpedDuringWindBoost()
+    void JumpedDuringWindBoost()
     {
         StopCoroutine(_windBoostRoutine);
         inWindDash = false;
+        _movement.canMove = true;
         _rb.linearVelocity = Vector3.zero;
 
-        Vector3 dir = _rb.transform.up * jumpBoost * 50;
+        Vector3 dir = _rb.transform.up * jumpBoost;
 
-        int duration = 5;
-        int timer = 0;
-
-
-        while (timer < duration)
-        {
-            _rb.AddForce(dir, ForceMode.Acceleration);
-            timer++;
-            yield return new WaitForFixedUpdate();
-        }
+        _rb.linearVelocity = dir;
     }
 }

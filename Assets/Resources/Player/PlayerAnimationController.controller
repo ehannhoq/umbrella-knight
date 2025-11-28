@@ -122,7 +122,7 @@ AnimatorStateTransition:
     m_ConditionEvent: Falling
     m_EventTreshold: 0
   - m_ConditionMode: 2
-    m_ConditionEvent: Walking
+    m_ConditionEvent: Moving
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8675228114700410036}
@@ -150,7 +150,7 @@ AnimatorStateTransition:
     m_ConditionEvent: Falling
     m_EventTreshold: 0
   - m_ConditionMode: 1
-    m_ConditionEvent: Walking
+    m_ConditionEvent: Moving
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -5732179644153940176}
@@ -517,7 +517,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: WallRide
+    m_ConditionEvent: WallRiding
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: Falling
@@ -531,7 +531,7 @@ AnimatorStateTransition:
   m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.5714286
-  m_HasExitTime: 1
+  m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
@@ -545,7 +545,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: WallRide
+    m_ConditionEvent: WallRiding
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: Falling
@@ -573,7 +573,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Walking
+    m_ConditionEvent: Moving
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8675228114700410036}
@@ -623,7 +623,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: WallRide
+    m_ConditionEvent: WallRiding
     m_EventTreshold: 2
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 4378293124239819137}
@@ -648,7 +648,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: WallRide
+    m_ConditionEvent: WallRiding
     m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 2466340656235951985}
@@ -673,7 +673,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: WallRide
+    m_ConditionEvent: WallRiding
     m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 2466340656235951985}
@@ -828,7 +828,7 @@ AnimatorController:
   m_Name: PlayerAnimationController
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: Walking
+  - m_Name: Moving
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -900,7 +900,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: WallRide
+  - m_Name: WallRiding
     m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -1008,7 +1008,7 @@ AnimatorStateTransition:
     m_ConditionEvent: Blocking
     m_EventTreshold: 0
   - m_ConditionMode: 1
-    m_ConditionEvent: Walking
+    m_ConditionEvent: Moving
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7266365915988280739}
@@ -1110,7 +1110,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: WallRide
+    m_ConditionEvent: WallRiding
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: Falling
@@ -1217,7 +1217,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Walking
+    m_ConditionEvent: Moving
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: Ascending
@@ -1386,7 +1386,7 @@ AnimatorStateTransition:
     m_ConditionEvent: Blocking
     m_EventTreshold: 0
   - m_ConditionMode: 2
-    m_ConditionEvent: Walking
+    m_ConditionEvent: Moving
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 479570335340338871}
@@ -1411,7 +1411,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: WallRide
+    m_ConditionEvent: WallRiding
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: Falling
@@ -1499,7 +1499,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: WallRide
+    m_ConditionEvent: WallRiding
     m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 2466340656235951985}
@@ -1524,7 +1524,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Walking
+    m_ConditionEvent: Moving
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -436817309572805085}
@@ -1549,7 +1549,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: WallRide
+    m_ConditionEvent: WallRiding
     m_EventTreshold: 2
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 4378293124239819137}
@@ -1656,7 +1656,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: WallRide
+    m_ConditionEvent: WallRiding
     m_EventTreshold: 2
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 4378293124239819137}

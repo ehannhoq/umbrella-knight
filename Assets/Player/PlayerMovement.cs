@@ -39,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
     private const float _playerHeight = 13f;
 
     [Header("Public Variables")]
+    public bool canMove;
     public bool grounded;
     public bool gliding;
     public bool ascending;
@@ -109,6 +110,8 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleMovement()
     {
+        if (!canMove) return;
+
         if (_moveInput != Vector2.zero)
         {
             Vector3 cameraForward = Vector3.ProjectOnPlane(_camera.transform.forward, Vector3.up);
@@ -117,8 +120,8 @@ public class PlayerMovement : MonoBehaviour
 
             Vector3 movement = (cameraForward * _moveInput.y + _camera.transform.right * _moveInput.x) * _movementSpeed;
             Step(movement);
-            RotatePlayer(movement);
             movement = AdjustForWall(movement);
+            RotatePlayer(movement);
 
             movement -= new Vector3(_rb.linearVelocity.x, 0, _rb.linearVelocity.z);
             _rb.AddForce(movement, grounded ? ForceMode.VelocityChange : ForceMode.Acceleration);
@@ -209,7 +212,7 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    void AdjustVelocity()
+    public void AdjustVelocity()
     {
         _rb.linearVelocity = AdjustForSlope();
         _rb.linearVelocity = AdjustForWall(_rb.linearVelocity);
@@ -230,7 +233,7 @@ public class PlayerMovement : MonoBehaviour
             0.175f,
             direction.normalized,
             out RaycastHit wallHit,
-            0.175f,
+            0.25f,
             ~LayerMask.GetMask("Player")
         ))
         {
