@@ -1,3 +1,4 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,7 +17,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _minStepHeight;
     [SerializeField] private float _maxStepHeight;
     [SerializeField] private float _minimumWallRideSpeed;
-    public bool runningIntoWall;
 
     [Header("Vertical Movement")]
     [SerializeField] private float _jumpHeight;
@@ -214,39 +214,40 @@ public class PlayerMovement : MonoBehaviour
 
     public void AdjustVelocity()
     {
-        _rb.linearVelocity = AdjustForSlope();
-        _rb.linearVelocity = AdjustForWall(_rb.linearVelocity);
+        Vector3 v = _rb.linearVelocity;
+        v = AdjustForSlope(v);
+        v = AdjustForWall(v);
+        _rb.linearVelocity = v;
     }
 
-    Vector3 AdjustForSlope()
+    Vector3 AdjustForSlope(Vector3 velocity)
     {
-        if (!grounded) return _rb.linearVelocity;
+        if (!grounded) return velocity;
 
-        return Vector3.ProjectOnPlane(_rb.linearVelocity, _groundHit.normal);
+        return Vector3.ProjectOnPlane(velocity, _groundHit.normal);
     }
-    Vector3 AdjustForWall(Vector3 direction)
+    Vector3 AdjustForWall(Vector3 velocity)
     {
-        runningIntoWall = false;
+        if (velocity.sqrMagnitude < 0.01f) return velocity;
+
+        float castDistance = Mathf.Max(0.25f, velocity.magnitude * Time.fixedDeltaTime);
         if (Physics.CapsuleCast(
             _rb.position + Vector3.up * (_playerHeight - 0.3f),
             _rb.position + Vector3.up * (0.3f),
             0.175f,
-            direction.normalized,
+            velocity.normalized,
             out RaycastHit wallHit,
-            0.25f,
+            castDistance,
             ~LayerMask.GetMask("Player")
         ))
         {
             Vector3 normal = wallHit.normal;
             normal.y = 0;
-            runningIntoWall = true;
-            float push = Vector3.Dot(direction, normal);
-            if (push > 0) direction -= normal * push;
-            Vector3 projected = Vector3.ProjectOnPlane(direction, normal);
+            Vector3 projected = Vector3.ProjectOnPlane(velocity, normal);
             return projected;
         }
 
-        return direction;
+        return velocity;
     }
 
     void SetAnimation()
@@ -257,10 +258,6 @@ public class PlayerMovement : MonoBehaviour
         _anim.SetBool("Falling", falling);
         _anim.SetInteger("WallRiding", _wallRiding);
     }
-
-
-
-
 
     public void RotatePlayer(Vector3 lookVector, bool instant = false)
     {
