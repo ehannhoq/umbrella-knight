@@ -277,7 +277,6 @@ public class PlayerMovement : MonoBehaviour
             _rb.AddForce(Vector3.up * _jumpHeight, ForceMode.Impulse);
         else if (_wallRiding != 0)
         {
-            Vector3 p1 = _rb.transform.position + Vector3.up * (_playerHeight / 2f - 0.2f);
             Vector3 dir;
 
             if (_wallRiding == (int)WallRideDirection.Right)
@@ -287,14 +286,14 @@ public class PlayerMovement : MonoBehaviour
 
             CheckWall(dir, out RaycastHit hit);
 
-            Vector3 axis = Quaternion.AngleAxis(90f, Vector3.up) * hit.normal;
-            Quaternion rot = Quaternion.AngleAxis(-45f, axis);
+            Quaternion rot = Quaternion.AngleAxis(-45f, Vector3.up);
+            Vector3 sideVector = (rot * hit.normal).normalized;
 
-            Vector3 jumpVector = (rot * hit.normal).normalized * _jumpHeight;
+            Vector3 forwardVector = Vector3.ProjectOnPlane(_camera.transform.forward, hit.normal).normalized;
+            forwardVector.y = 0;
+            Vector3 jumpDirection = (sideVector + forwardVector).normalized * _jumpHeight;
+            _rb.linearVelocity = jumpDirection;    
 
-            _rb.linearVelocity = jumpVector;
-
-            // Debug.DrawLine(_player.transform.position, _player.transform.position + jumpVector, Color.yellow);
         }
     }
 }
