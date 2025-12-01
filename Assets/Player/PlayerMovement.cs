@@ -55,6 +55,7 @@ public class PlayerMovement : MonoBehaviour
         _camera = GameObject.FindWithTag("MainCamera");
 
         _rb.freezeRotation = true;
+        canMove = true;
     }
 
     void FixedUpdate()
