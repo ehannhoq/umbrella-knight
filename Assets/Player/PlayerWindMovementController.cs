@@ -30,9 +30,6 @@ public class PlayerWindMovementController : MonoBehaviour
         _movement = GetComponent<PlayerMovement>();
         _umbrellaManager = GetComponent<UmbrellaManager>();
         inWindDash = false;
-
-        // _movement.playerJumped += () => { if (inWindDash) JumpedDuringWindBoost(); };
-
     }
 
     public void OnWindBoost()
@@ -66,8 +63,10 @@ public class PlayerWindMovementController : MonoBehaviour
         inWindDash = false;
     }
 
-    void JumpedDuringWindBoost()
+    public void OnJump()
     {
+        if (!inWindDash) return;
+
         StopCoroutine(_windBoostRoutine);
         inWindDash = false;
         _movement.canMove = true;
@@ -75,6 +74,8 @@ public class PlayerWindMovementController : MonoBehaviour
 
         Vector3 dir = _rb.transform.up * jumpBoost;
 
-        _rb.linearVelocity = dir;
+        _rb.AddForce(dir, ForceMode.VelocityChange);
+
+        Debug.Log("Wind Jump");
     }
 }

@@ -4157,7 +4157,7 @@ Transform:
   m_GameObject: {fileID: 1066452442}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.2099996, y: 0.161, z: -59.749996}
+  m_LocalPosition: {x: 8.2, y: 0.161, z: 65.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -4277,7 +4277,6 @@ MonoBehaviour:
   _minStepHeight: 0.05
   _maxStepHeight: 0.2
   _minimumWallRideSpeed: 0
-  runningIntoWall: 0
   _jumpHeight: 14
   _jumpCooldown: 0
   _gravity: 3

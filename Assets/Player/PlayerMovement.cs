@@ -299,10 +299,11 @@ public class PlayerMovement : MonoBehaviour
             Vector3 forwardVector = Vector3.ProjectOnPlane(_camera.transform.forward, hit.normal).normalized;
             forwardVector.y = 0;
             Vector3 jumpDirection = (sideVector + forwardVector).normalized * _jumpHeight;
-            _rb.linearVelocity = jumpDirection;    
+            _rb.AddForce(jumpDirection, ForceMode.VelocityChange);
         }
 
         StartCoroutine(JumpCooldown());
+        Debug.Log("Normal Jump");
     }
 
     IEnumerator JumpCooldown()
