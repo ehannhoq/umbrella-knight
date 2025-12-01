@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -37,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
     private RaycastHit _groundHit;
     private int _wallRiding;
     private const float _playerHeight = 13f;
+    private bool canJump;
 
     [Header("Public Variables")]
     public bool canMove;
@@ -56,6 +58,7 @@ public class PlayerMovement : MonoBehaviour
 
         _rb.freezeRotation = true;
         canMove = true;
+        canJump = true;
     }
 
     void FixedUpdate()
@@ -273,7 +276,10 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public void OnJump()
-    {
+    {   
+        if (!canJump) return;
+        canJump = true;
+
         if (grounded)
             _rb.AddForce(Vector3.up * _jumpHeight, ForceMode.Impulse);
         else if (_wallRiding != 0)
@@ -294,7 +300,14 @@ public class PlayerMovement : MonoBehaviour
             forwardVector.y = 0;
             Vector3 jumpDirection = (sideVector + forwardVector).normalized * _jumpHeight;
             _rb.linearVelocity = jumpDirection;    
-
         }
+
+        StartCoroutine(JumpCooldown());
+    }
+
+    IEnumerator JumpCooldown()
+    {
+        yield return new WaitForSeconds(_jumpCooldown);
+        canJump = true;
     }
 }
