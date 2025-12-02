@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,12 +15,13 @@ public class PlayerMovement : MonoBehaviour
     }
 
     [Header("Horizontal Movement")]
-    [SerializeField] private float _movementSpeed;
     [SerializeField] private float _minStepHeight;
     [SerializeField] private float _maxStepHeight;
     [SerializeField] private float _minimumWallRideSpeed;
+    [SerializeField] private float _wallRideMovementSpeedIncrease;
 
     [Header("Vertical Movement")]
+    [SerializeField] private float _groundedMatchTime;
     [SerializeField] private float _jumpHeight;
     [SerializeField] private float _jumpCooldown;
 
@@ -30,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _stickToGroundForce;
     [SerializeField] private float ascendingFallingThreshold;
 
+    private PlayerStats _playerStats;
     private Rigidbody _rb;
     private Animator _anim;
     private GameObject _camera;
@@ -39,6 +42,8 @@ public class PlayerMovement : MonoBehaviour
     private int _wallRiding;
     private const float _playerHeight = 13f;
     private bool canJump;
+    private bool trueGrounded;
+    private Coroutine matchGroundedCoroutine;
 
     [Header("Public Variables")]
     public bool canMove;
@@ -52,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
     {
         GameObject player = GameObject.FindWithTag("Player");
 
+        _playerStats = GetComponent<PlayerStats>();
         _rb = player.GetComponent<Rigidbody>();
         _anim = player.GetComponent<Animator>();
         _camera = GameObject.FindWithTag("MainCamera");
@@ -69,7 +75,12 @@ public class PlayerMovement : MonoBehaviour
         AdjustVelocity();
         SetAnimation();
 
-        _rb.linearDamping = grounded ? 10 : 1;
+        if (grounded != trueGrounded && matchGroundedCoroutine == null)
+        {
+            StartCoroutine(MatchGrounded());
+        }
+
+        _rb.linearDamping = trueGrounded ? 10 : 1;
         ascending = _rb.linearVelocity.y > ascendingFallingThreshold;
         falling = _rb.linearVelocity.y < -ascendingFallingThreshold;
 
@@ -83,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
 
     void CheckGrounded()
     {
-        grounded = false;
+        trueGrounded = false;
 
         if (Physics.SphereCast(
             _rb.position + Vector3.up * 0.35f,
@@ -95,13 +106,13 @@ public class PlayerMovement : MonoBehaviour
             QueryTriggerInteraction.Ignore
             ))
         {
-            grounded = Vector3.Dot(_groundHit.normal, Vector3.up) > 0.6f;
+            trueGrounded = Vector3.Dot(_groundHit.normal, Vector3.up) > 0.6f;
         }
     }
 
     void StickToGround()
     {
-        if (!grounded) return;
+        if (!trueGrounded) return;
 
         float yDiff = _groundHit.point.y - _rb.transform.position.y;
         if (yDiff > 0f && yDiff <= _minStepHeight)
@@ -122,13 +133,17 @@ public class PlayerMovement : MonoBehaviour
             cameraForward.y = 0;
             cameraForward = cameraForward.normalized;
 
-            Vector3 movement = (cameraForward * _moveInput.y + _camera.transform.right * _moveInput.x) * _movementSpeed;
+            Vector3 movement = (cameraForward * _moveInput.y + _camera.transform.right * _moveInput.x) * _playerStats.movementSpeed;
+
+            if (_wallRiding != 0)
+                movement *= _wallRideMovementSpeedIncrease;
+
             Step(movement);
             movement = AdjustForWall(movement);
             RotatePlayer(movement);
 
             movement -= new Vector3(_rb.linearVelocity.x, 0, _rb.linearVelocity.z);
-            _rb.AddForce(movement, grounded ? ForceMode.VelocityChange : ForceMode.Acceleration);
+            _rb.AddForce(movement, trueGrounded ? ForceMode.VelocityChange : ForceMode.Acceleration);
         }
 
         CheckForWallRide();
@@ -226,7 +241,7 @@ public class PlayerMovement : MonoBehaviour
 
     Vector3 AdjustForSlope(Vector3 velocity)
     {
-        if (!grounded) return velocity;
+        if (!trueGrounded) return velocity;
 
         return Vector3.ProjectOnPlane(velocity, _groundHit.normal);
     }
@@ -256,7 +271,7 @@ public class PlayerMovement : MonoBehaviour
 
     void SetAnimation()
     {
-        _anim.SetBool("Grounded", grounded);
+        _anim.SetBool("Grounded", trueGrounded);
         _anim.SetBool("Moving", _moveInput != Vector2.zero);
         _anim.SetBool("Ascending", ascending);
         _anim.SetBool("Falling", falling);
@@ -310,5 +325,12 @@ public class PlayerMovement : MonoBehaviour
     {
         yield return new WaitForSeconds(_jumpCooldown);
         canJump = true;
+    }
+
+    IEnumerator MatchGrounded()
+    {
+        yield return new WaitForSeconds(_groundedMatchTime);
+        grounded = trueGrounded;
+        matchGroundedCoroutine = null;
     }
 }
