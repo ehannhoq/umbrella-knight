@@ -70,7 +70,7 @@ public class PlayerWindMovementController : MonoBehaviour
         StopCoroutine(_windBoostRoutine);
         inWindDash = false;
         _movement.canMove = true;
-        _rb.linearVelocity = Vector3.zero;
+        _rb.linearVelocity *= 0.33f;
 
         Vector3 dir = _rb.transform.up * jumpBoost;
 
