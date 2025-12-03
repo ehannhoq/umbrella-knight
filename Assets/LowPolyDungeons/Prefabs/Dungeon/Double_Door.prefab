@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 296906153359642019}
   m_Layer: 0
   m_Name: Double_Door
-  m_TagString: Untagged
+  m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -41,9 +41,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 296906153359642019}
     m_Modifications:
+    - target: {fileID: 2049503107585860927, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2586089340656894539, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3260666880983340108, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7651507678204064229, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7771280631433555470, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
       propertyPath: m_Name
       value: Door_03_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7771280631433555470, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7771280631434048046, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -103,9 +123,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 296906153359642019}
     m_Modifications:
+    - target: {fileID: 2049503107585860927, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2586089340656894539, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3260666880983340108, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7651507678204064229, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7771280631433555470, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
       propertyPath: m_Name
       value: Door_03_1 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7771280631433555470, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7771280631434048046, guid: 6c369a5d2e9856948b456de4eba586fd, type: 3}
       propertyPath: m_LocalPosition.x

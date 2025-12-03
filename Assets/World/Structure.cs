@@ -3,5 +3,8 @@ using UnityEngine;
 
 public class Structure : MonoBehaviour
 {
-    public List<GameObject> doors;
+    public GameObject entrance;
+    public List<GameObject> exits;
+    public List<GameObject> spawnAnchors;
+    public bool clearedRoom;
 }
