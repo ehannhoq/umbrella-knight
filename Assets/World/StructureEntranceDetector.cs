@@ -14,7 +14,7 @@ public class StructureEntranceDetector : MonoBehaviour
         {
             if (!_parentStructure.playerInside)
             {
-                _parentStructure.CullStructures();
+                _parentStructure.OnEnterStructure();
             }
         }
     }

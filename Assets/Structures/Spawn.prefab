@@ -141,13 +141,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5bed628f0cce5043b30e04c3d6f20b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clearedRoom: 0
+  playerInside: 1
   entrance: {fileID: 8737043630780550169}
   exits:
   - {fileID: 8737043630780550169}
-  spawnAnchors: []
-  clearedRoom: 0
-  playerInside: 1
-  neighbors: []
 --- !u!1001 &227576335515579224
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,23 +1,34 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class StructureGenerator : MonoBehaviour
 {
     [SerializeField] Structure spawn;
     [SerializeField] List<Structure> structures;
-
     [SerializeField] int totalGenerations;
     [SerializeField] float overlapThreshold;
+
+    private NavMeshSurface _navMeshSurface;
+
+    public List<GameObject> enemies;
 
     void Start()
     {
         GenerateStructures(spawn.entrance, 0, -1);
+        _navMeshSurface = GetComponent<NavMeshSurface>();
     }
 
     void GenerateStructures(GameObject exit, int currentGeneration, int lastGeneratedStructureIndex)
     {
-        if (currentGeneration >= totalGenerations) return;
+        if (currentGeneration >= totalGenerations) 
+        {
+            StartCoroutine(GenerateNavMeshSurface());
+            return;
+        }
 
         int index;
 
@@ -31,9 +42,12 @@ public class StructureGenerator : MonoBehaviour
         branch.transform.rotation = Quaternion.LookRotation(exit.transform.forward);
         branch.transform.position = exit.transform.position;
         
+        branch.Initialize(this);
+
         Structure root = exit.transform.parent.GetComponent<Structure>();
         root.neighbors.Add(branch);
         branch.neighbors.Add(root);
+
 
         if (currentGeneration != 0)
         {
@@ -46,6 +60,12 @@ public class StructureGenerator : MonoBehaviour
         {
             GenerateStructures(e, currentGeneration + 1, index);
         }
+    }
+    
+    IEnumerator GenerateNavMeshSurface()
+    {
+        yield return new WaitForEndOfFrame();
+        _navMeshSurface.BuildNavMesh();
     }
 
 
