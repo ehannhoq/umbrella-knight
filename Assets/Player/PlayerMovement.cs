@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 _moveInput;
     private RaycastHit _groundHit;
     private int _wallRiding;
-    private const float _playerHeight = 13f;
+    private float _playerHeight = 1.8f;
     private bool canJump;
     private bool trueGrounded;
     private Coroutine matchGroundedCoroutine;
@@ -249,10 +249,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if (velocity.sqrMagnitude < 0.01f) return velocity;
 
+        Vector3 p1 = _rb.position + Vector3.up * (0.3f);
+        Vector3 p2 = _rb.position + Vector3.up * (_playerHeight - 0.3f);
+
         float castDistance = Mathf.Max(0.25f, velocity.magnitude * Time.fixedDeltaTime);
         if (Physics.CapsuleCast(
-            _rb.position + Vector3.up * (_playerHeight - 0.3f),
-            _rb.position + Vector3.up * (0.3f),
+            p1,
+            p2,
             0.175f,
             velocity.normalized,
             out RaycastHit wallHit,
@@ -318,7 +321,6 @@ public class PlayerMovement : MonoBehaviour
         }
 
         StartCoroutine(JumpCooldown());
-        Debug.Log("Normal Jump");
     }
 
     IEnumerator JumpCooldown()
