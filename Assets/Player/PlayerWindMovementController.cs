@@ -75,7 +75,5 @@ public class PlayerWindMovementController : MonoBehaviour
         Vector3 dir = _rb.transform.up * jumpBoost;
 
         _rb.AddForce(dir, ForceMode.VelocityChange);
-
-        Debug.Log("Wind Jump");
     }
 }
