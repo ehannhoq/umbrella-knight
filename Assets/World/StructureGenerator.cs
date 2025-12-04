@@ -18,15 +18,15 @@ public class StructureGenerator : MonoBehaviour
 
     void Start()
     {
-        GenerateStructures(spawn.entrance, 0, -1);
+        GenerateStructures(spawn.entrance, 0, -1, null);
         _navMeshSurface = GetComponent<NavMeshSurface>();
     }
 
-    void GenerateStructures(GameObject exit, int currentGeneration, int lastGeneratedStructureIndex)
+    void GenerateStructures(GameObject exit, int currentGeneration, int lastGeneratedStructureIndex, List<GameObject> subsequentStructures)
     {
-        if (currentGeneration >= totalGenerations) 
+        if (currentGeneration >= totalGenerations)
         {
-            StartCoroutine(GenerateNavMeshSurface());
+            StartCoroutine(FinalizeDungeonGeneration(subsequentStructures));
             return;
         }
 
@@ -37,11 +37,14 @@ public class StructureGenerator : MonoBehaviour
             index = Random.Range(0, structures.Count);
         } while (index == lastGeneratedStructureIndex);
 
-        
+        if (subsequentStructures == null)
+            subsequentStructures = new List<GameObject>();
+
+
         Structure branch = Instantiate(structures[index], gameObject.transform);
         branch.transform.rotation = Quaternion.LookRotation(exit.transform.forward);
         branch.transform.position = exit.transform.position;
-        
+
         branch.Initialize(this);
 
         Structure root = exit.transform.parent.GetComponent<Structure>();
@@ -51,23 +54,30 @@ public class StructureGenerator : MonoBehaviour
 
         if (currentGeneration != 0)
         {
-            branch.gameObject.SetActive(false);
+            subsequentStructures.Add(branch.gameObject);
         }
 
         ClearOverlaps(exit.transform.parent, branch.transform);
 
         foreach (GameObject e in branch.exits)
         {
-            GenerateStructures(e, currentGeneration + 1, index);
+            GenerateStructures(e, currentGeneration + 1, index, subsequentStructures);
         }
     }
-    
-    IEnumerator GenerateNavMeshSurface()
+
+    public IEnumerator FinalizeDungeonGeneration(List<GameObject> subsequentStructures)
     {
         yield return new WaitForEndOfFrame();
-        _navMeshSurface.BuildNavMesh();
-    }
 
+        _navMeshSurface.BuildNavMesh();
+
+        yield return new WaitForEndOfFrame();
+        
+        foreach (GameObject structure in subsequentStructures)
+        {
+            structure.SetActive(false);
+        }
+    }
 
     void ClearOverlaps(Transform root, Transform branch)
     {
