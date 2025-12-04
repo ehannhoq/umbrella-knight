@@ -27,15 +27,15 @@ public class Door : InteractableMonobehavior
 
         active = false;
 
-        StartCoroutine(OpenDoorAnimation(leftDoor, 1));
-        StartCoroutine(OpenDoorAnimation(rightDoor, -1));
+        StartCoroutine(OpenDoorAnimation(leftDoor, -1));
+        StartCoroutine(OpenDoorAnimation(rightDoor, 1));
     }
 
 
 
     IEnumerator OpenDoorAnimation(GameObject door, float direction)
     {
-        Quaternion rot = Quaternion.AngleAxis(-135f * direction, Vector2.up);
+        Quaternion rot = Quaternion.AngleAxis(135f * direction, Vector2.up);
 
         while (!door.transform.localRotation.Equals(rot))
         {
