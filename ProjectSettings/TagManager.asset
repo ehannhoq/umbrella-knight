@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Wall
   - Door
+  - Interactable
   layers:
   - Default
   - TransparentFX
@@ -14,8 +15,8 @@ TagManager:
   - Water
   - UI
   - Player
-  - 
-  - 
+  - Outlined Object
+  - Ignore Collision
   - 
   - 
   - 

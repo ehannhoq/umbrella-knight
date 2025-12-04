@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6240460531196556772}
   - component: {fileID: 280055193769073694}
   - component: {fileID: 327929163389973366}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Wall_12
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3169450932431828157}
   - component: {fileID: 7711242230588469313}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: GameObject (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,8 +140,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.9906263, y: 1.9830313, z: 0.28257897}
-  m_Center: {x: -0.0046868324, y: 2.989737, z: 0.004687652}
+  m_Size: {x: 3.9906263, y: 1.6125946, z: 0.28257897}
+  m_Center: {x: -0.0046868324, y: 3.1749554, z: 0.004687652}
 --- !u!1 &6468584957204443321
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,7 +152,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6314518402376111847}
   - component: {fileID: 919453465927252439}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: GameObject (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -193,8 +193,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.4784932, y: 2.3127456, z: 0.28257897}
-  m_Center: {x: 1.2611511, y: 1.1563728, z: 0.004687652}
+  m_Size: {x: 1.080617, y: 2.3127456, z: 0.28257897}
+  m_Center: {x: 1.4600892, y: 1.1563728, z: 0.004687652}
 --- !u!1 &8900134343726061654
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,7 +205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5754693690864625176}
   - component: {fileID: 8487023481656662373}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -246,5 +246,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.4691181, y: 2.3127456, z: 0.28257897}
-  m_Center: {x: -1.265441, y: 1.1563728, z: 0.004687652}
+  m_Size: {x: 1.0712417, y: 2.3127456, z: 0.28257897}
+  m_Center: {x: -1.4643791, y: 1.1563728, z: 0.004687652}

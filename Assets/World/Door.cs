@@ -1,6 +1,7 @@
+using System.Collections;
 using UnityEngine;
 
-public class Door : MonoBehaviour
+public class Door : InteractableMonobehavior
 {
     public enum DoorState
     {
@@ -10,7 +11,7 @@ public class Door : MonoBehaviour
 
     [SerializeField] GameObject leftDoor;
     [SerializeField] GameObject rightDoor;
-    
+
     public DoorState state;
     public bool locked;
 
@@ -20,14 +21,28 @@ public class Door : MonoBehaviour
         locked = false;
     }
 
-    public void ToggleState()
+    public override void Interact()
     {
-        if (state == DoorState.Open) state = DoorState.Closed;
-        if (state == DoorState.Closed) state = DoorState.Open;
+        if (locked) return;
+
+        active = false;
+
+        StartCoroutine(OpenDoorAnimation(leftDoor, 1));
+        StartCoroutine(OpenDoorAnimation(rightDoor, -1));
     }
 
-    void Animate()
+
+
+    IEnumerator OpenDoorAnimation(GameObject door, float direction)
     {
-        
+        Quaternion rot = Quaternion.AngleAxis(-135f * direction, Vector2.up);
+
+        while (!door.transform.localRotation.Equals(rot))
+        {
+            door.transform.localRotation = Quaternion.Slerp(door.transform.localRotation, rot, 0.1f);
+            yield return new WaitForEndOfFrame();
+        }
+
+        door.transform.localRotation = rot;
     }
 }

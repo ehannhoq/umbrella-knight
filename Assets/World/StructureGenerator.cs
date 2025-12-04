@@ -26,10 +26,19 @@ public class StructureGenerator : MonoBehaviour
             index = Random.Range(0, structures.Count);
         } while (index == lastGeneratedStructureIndex);
 
-        Structure branch = Instantiate(structures[index], gameObject.transform);
         
+        Structure branch = Instantiate(structures[index], gameObject.transform);
         branch.transform.rotation = Quaternion.LookRotation(exit.transform.forward);
         branch.transform.position = exit.transform.position;
+        
+        Structure root = exit.transform.parent.GetComponent<Structure>();
+        root.neighbors.Add(branch);
+        branch.neighbors.Add(root);
+
+        if (currentGeneration != 0)
+        {
+            branch.gameObject.SetActive(false);
+        }
 
         ClearOverlaps(exit.transform.parent, branch.transform);
 

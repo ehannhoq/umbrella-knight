@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _minStepHeight;
     [SerializeField] private float _maxStepHeight;
     [SerializeField] private float _minimumWallRideSpeed;
+    [SerializeField] private float _maximumDistanceFromWallForWallRide;
     [SerializeField] private float _wallRideMovementSpeedIncrease;
 
     [Header("Vertical Movement")]
@@ -187,7 +188,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 top = _rb.position + Vector3.up * (_playerHeight - 0.3f);
         Vector3 bottom = _rb.position + Vector3.up * 0.3f;
 
-        if (Physics.CapsuleCast(bottom, top, radius, direction, out hit, 1f, ~LayerMask.GetMask("Player")))
+        if (Physics.CapsuleCast(bottom, top, radius, direction, out hit, _maximumDistanceFromWallForWallRide, ~LayerMask.GetMask("Player")))
             return true;
 
         hit = new RaycastHit();
@@ -260,7 +261,7 @@ public class PlayerMovement : MonoBehaviour
             velocity.normalized,
             out RaycastHit wallHit,
             castDistance,
-            ~LayerMask.GetMask("Player")
+            ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Ignore Collision"))
         ))
         {
             Vector3 normal = wallHit.normal;
@@ -316,7 +317,7 @@ public class PlayerMovement : MonoBehaviour
 
             Vector3 forwardVector = Vector3.ProjectOnPlane(_camera.transform.forward, hit.normal).normalized;
             forwardVector.y = 0;
-            Vector3 jumpDirection = (sideVector + forwardVector * 1.5f).normalized * _jumpHeight;
+            Vector3 jumpDirection = (sideVector + forwardVector * 1.25f).normalized * _jumpHeight;
             _rb.AddForce(jumpDirection, ForceMode.VelocityChange);
         }
 

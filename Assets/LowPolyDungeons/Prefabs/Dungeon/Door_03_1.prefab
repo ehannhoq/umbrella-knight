@@ -122,6 +122,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorFurniture_04
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: f5e95185ae4e28b4cb87147df0dc5b0e, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: f5e95185ae4e28b4cb87147df0dc5b0e, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -221,6 +225,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 9c53176c65b84df4bbe7b89cf3f9efbd, type: 3}
       propertyPath: m_Name
       value: DoorFurniture
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 9c53176c65b84df4bbe7b89cf3f9efbd, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 9c53176c65b84df4bbe7b89cf3f9efbd, type: 3}
       propertyPath: m_RootOrder
@@ -325,6 +333,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorFurniture_04
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: f5e95185ae4e28b4cb87147df0dc5b0e, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: f5e95185ae4e28b4cb87147df0dc5b0e, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -424,6 +436,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 9c53176c65b84df4bbe7b89cf3f9efbd, type: 3}
       propertyPath: m_Name
       value: DoorFurniture
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 9c53176c65b84df4bbe7b89cf3f9efbd, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 9c53176c65b84df4bbe7b89cf3f9efbd, type: 3}
       propertyPath: m_RootOrder
