@@ -11,6 +11,8 @@ public class IdleBehavior : ScriptableObject, IEnemyBehavior
 
     public void Execute(EnemyAI enemyAI)
     {
+        if (!enemyAI.canSeePlayer) return;
+        
         if (enemyAI.distanceToPlayer <= enemyAI.minimumAttackDistance)
         {
             enemyAI.ChangeCurrentBehavior(attackBehavior);

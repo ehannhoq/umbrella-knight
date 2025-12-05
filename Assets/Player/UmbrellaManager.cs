@@ -61,7 +61,6 @@ public class UmbrellaManager : MonoBehaviour
         _goUmbrella.transform.localScale = new Vector3(0.006f, 0.006f, 0.006f);
 
         _collider = _goUmbrella.GetComponent<Collider>();
-        _collider.enabled = false;
 
         umbrellaState = UmbrellaState.Closed;
     }
@@ -79,7 +78,6 @@ public class UmbrellaManager : MonoBehaviour
 
         if (blockAction.IsPressed())
         {
-            _collider.enabled = false;
 
             if (!_movement.grounded && !_movement.ascending)
             {
@@ -88,7 +86,6 @@ public class UmbrellaManager : MonoBehaviour
             else
             {
                 _movement.gliding = false;
-                StartCoroutine(Util.DelayedActionSeconds(0.25f, () => { _collider.enabled = true; }));
             }
 
 
@@ -152,7 +149,6 @@ public class UmbrellaManager : MonoBehaviour
         _animator.SetBool("Moving", false);
         _collider.enabled = true;
 
-        // start fresh hit tracking for this attack and do an immediate overlap check
         _hitEnemiesThisAttack = new HashSet<EnemyAI>();
         DoHitCheck();
         if (_resetAttackCoroutine != null)
@@ -176,7 +172,6 @@ public class UmbrellaManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
             _rb.AddForce(_rb.transform.forward * _attackNudgeAmount, ForceMode.Acceleration);
 
-            // check overlap each physics step to catch fast/mid-frame collisions
             DoHitCheck();
             time--;
         }
@@ -192,17 +187,14 @@ public class UmbrellaManager : MonoBehaviour
         _animator.SetTrigger("ResetAttack");
         _collider.enabled = false;
 
-        // clear hit tracking when the attack finishes
         _hitEnemiesThisAttack = null;
     }
 
-    // Physics overlap check to reliably detect enemies hit by the umbrella.
     void DoHitCheck()
     {
         if (_collider == null) return;
         if (_hitEnemiesThisAttack == null) _hitEnemiesThisAttack = new HashSet<EnemyAI>();
 
-        // Use the collider's bounds as the overlap box. Rotation is provided from the umbrella transform.
         var center = _collider.bounds.center;
         var extents = _collider.bounds.extents;
         var rot = _goUmbrella != null ? _goUmbrella.transform.rotation : Quaternion.identity;
@@ -217,7 +209,6 @@ public class UmbrellaManager : MonoBehaviour
 
             _hitEnemiesThisAttack.Add(enemy);
 
-            // apply damage and knockback similar to EnemyHitbox
             enemy.DealDamage(PlayerStats.Instance.attackDamage);
             if (enemy.takesKnockback)
             {
@@ -271,6 +262,5 @@ public class UmbrellaManager : MonoBehaviour
         _goUmbrella.transform.localScale = new Vector3(0.006f, 0.006f, 0.006f);
 
         _collider = _goUmbrella.GetComponent<Collider>();
-        _collider.enabled = false;
     }
 }

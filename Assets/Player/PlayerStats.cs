@@ -1,5 +1,4 @@
 using System;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
@@ -14,10 +13,13 @@ public class PlayerStats : MonoBehaviour
     public float movementSpeed;
 
     [Header("Umbrella")]
+    public float baseAttackDamage;
     public float attackDamage;
     public float knockback;
 
     public event Action onPlayerHurt;
+
+    private Rigidbody _rb;
 
     void Awake()
     {
@@ -27,6 +29,7 @@ public class PlayerStats : MonoBehaviour
     void Start()
     {
         health = maxHealth;
+        _rb = GameObject.FindWithTag("Player").GetComponent<Rigidbody>();
     }
 
     public void DealDamage(float damage)
@@ -43,6 +46,13 @@ public class PlayerStats : MonoBehaviour
 
     void OnDeath()
     {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Title");
+        
+    }
 
+
+    void Update()
+    {
+        attackDamage = baseAttackDamage + _rb.linearVelocity.magnitude;
     }
 }

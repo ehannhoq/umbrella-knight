@@ -66,6 +66,11 @@ public class Projectile : MonoBehaviour
         Instantiate(this, position, rotation);
     }
 
+    public void Reflect(Vector3 normal)
+    {
+        _rb.linearVelocity = Vector3.Reflect(_rb.linearVelocity, normal);
+    }
+
     public virtual void OnSpawn() { }
 
     public virtual void OnDestroy()

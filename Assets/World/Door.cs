@@ -18,20 +18,21 @@ public class Door : InteractableMonobehavior
     void Start()
     {
         state = DoorState.Closed;
-        locked = false;
+        locked = true;
+    }
+
+    public void ToggleLocked()
+    {
+        locked = !locked;
+        active = !locked;
     }
 
     public override void Interact()
     {
-        if (locked) return;
-
         active = false;
-
         StartCoroutine(OpenDoorAnimation(leftDoor, -1));
         StartCoroutine(OpenDoorAnimation(rightDoor, 1));
     }
-
-
 
     IEnumerator OpenDoorAnimation(GameObject door, float direction)
     {

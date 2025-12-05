@@ -15,9 +15,6 @@ MonoBehaviour:
   idleBehavior: {fileID: 11400000, guid: 46765afa919704211ae035f36fc55516, type: 2}
   projectiles:
   - {fileID: 7647375919561907788, guid: a117fac3a41ea4e3180a2997d4a7de13, type: 3}
-  - {fileID: 8915312667134092580, guid: 7479a7b0ec6e148158bf814295fbf527, type: 3}
-  - {fileID: 689667626583958020, guid: a583e083685e04eea8e27de46cfe82d1, type: 3}
   attackTimes:
-  - 6
-  - 4
-  - 2
+  - 3
+  - 1.5

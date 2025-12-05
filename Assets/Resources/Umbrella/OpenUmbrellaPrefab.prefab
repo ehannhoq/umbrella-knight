@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5148058150086651174}
   - component: {fileID: 6699155816180982337}
+  - component: {fileID: 7245286895932111550}
   m_Layer: 27
   m_Name: OpenUmbrellaPrefab
   m_TagString: Umbrella
@@ -43,10 +44,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 67108864
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4160751615
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -54,6 +55,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5, y: 5, z: 2}
   m_Center: {x: 0, y: 0, z: 3.5}
+--- !u!114 &7245286895932111550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2584336685040702466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c2f4b8d52cf74b9cbe188ab4d47c008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8168534061202526696
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -16,53 +16,115 @@ public class StructureGenerator : MonoBehaviour
 
     public List<EnemyAI> enemies;
 
+    [Header("Dead-end bias")]
+    [Tooltip("If remaining generations <= this threshold, prefer structures with 0 exits when a parent has fewer neighbors than exits.")]
+    [SerializeField] int deadEndPriorityThreshold = 2;
+    [Tooltip("Multiplier applied to spawnWeight for zero-exit structures when bias applies.")]
+    [SerializeField] int deadEndWeightMultiplier = 4;
+    [Tooltip("Minimum generation index before dead-end bias can apply. Prevents biasing toward dead-ends at very early generations.")]
+    [SerializeField] int deadEndMinGeneration = 1;
+
     void Start()
     {
-        GenerateStructures(spawn.entrance, 0, -1, null);
         _navMeshSurface = GetComponent<NavMeshSurface>();
+        GenerateStructuresIterative(spawn.entrance);
     }
 
-    void GenerateStructures(GameObject exit, int currentGeneration, int lastGeneratedStructureIndex, List<GameObject> subsequentStructures)
+    void GenerateStructuresIterative(GameObject startExit)
     {
-        if (currentGeneration >= totalGenerations)
+        var subsequentStructures = new List<GameObject>();
+
+        var q = new Queue<(GameObject exit, int generation, int lastGeneratedStructureIndex)>();
+        q.Enqueue((startExit, 0, -1));
+
+        while (q.Count > 0)
         {
-            StartCoroutine(FinalizeDungeonGeneration(subsequentStructures));
-            return;
+            var item = q.Dequeue();
+            GameObject exit = item.exit;
+            int currentGeneration = item.generation;
+            int lastGeneratedStructureIndex = item.lastGeneratedStructureIndex;
+
+            if (exit == null) continue;
+
+            if (currentGeneration >= totalGenerations)
+            {
+                continue;
+            }
+
+            int remaining = totalGenerations - currentGeneration;
+            Structure parentStruct = exit.transform.parent.GetComponent<Structure>();
+
+            List<int> weights = new List<int>(structures.Count);
+            for (int i = 0; i < structures.Count; i++)
+            {
+                int weight = Mathf.Max(1, structures[i].spawnWeight);
+
+                if (parentStruct.neighbors.Count < parentStruct.exits.Count && remaining <= deadEndPriorityThreshold)
+                {
+                    if (structures[i].exits.Count == 0)
+                    {
+                        if (currentGeneration >= deadEndPriorityThreshold)
+                            weight *= deadEndWeightMultiplier;
+                        else if (currentGeneration <= deadEndMinGeneration)
+                            weight = 0;
+                    }
+                }
+
+                if (i == lastGeneratedStructureIndex)
+                    weight = 0;
+
+                weights.Add(weight);
+            }
+
+            int totalWeight = 0;
+            for (int i = 0; i < weights.Count; i++) totalWeight += weights[i];
+
+            int index = 0;
+            if (totalWeight <= 0)
+            {
+                index = (lastGeneratedStructureIndex + 1) % Mathf.Max(1, structures.Count);
+            }
+            else
+            {
+                int rand = Random.Range(0, totalWeight);
+                int acc = 0;
+                for (int i = 0; i < weights.Count; i++)
+                {
+                    acc += weights[i];
+                    if (rand < acc)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+            }
+
+            Structure branch = Instantiate(structures[index], gameObject.transform);
+            branch.transform.rotation = Quaternion.LookRotation(exit.transform.forward);
+            branch.transform.position = exit.transform.position;
+            branch.clearedRoom = false;
+            branch.Initialize(this);
+
+            if (parentStruct != null)
+            {
+                parentStruct.neighbors.Add(branch);
+                branch.neighbors.Add(parentStruct);
+            }
+
+            if (currentGeneration != 0)
+            {
+                subsequentStructures.Add(branch.gameObject);
+            }
+
+            ClearOverlaps(exit.transform.parent, branch.transform);
+
+            foreach (GameObject e in branch.exits)
+            {
+                q.Enqueue((e, currentGeneration + 1, index));
+            }
         }
 
-        int index;
-
-        do
-        {
-            index = Random.Range(0, structures.Count);
-        } while (index == lastGeneratedStructureIndex);
-
-        if (subsequentStructures == null)
-            subsequentStructures = new List<GameObject>();
-
-
-        Structure branch = Instantiate(structures[index], gameObject.transform);
-        branch.transform.rotation = Quaternion.LookRotation(exit.transform.forward);
-        branch.transform.position = exit.transform.position;
-
-        branch.Initialize(this);
-
-        Structure root = exit.transform.parent.GetComponent<Structure>();
-        root.neighbors.Add(branch);
-        branch.neighbors.Add(root);
-
-
-        if (currentGeneration != 0)
-        {
-            subsequentStructures.Add(branch.gameObject);
-        }
-
-        ClearOverlaps(exit.transform.parent, branch.transform);
-
-        foreach (GameObject e in branch.exits)
-        {
-            GenerateStructures(e, currentGeneration + 1, index, subsequentStructures);
-        }
+        StartCoroutine(FinalizeDungeonGeneration(subsequentStructures));
     }
 
     public IEnumerator FinalizeDungeonGeneration(List<GameObject> subsequentStructures)
@@ -72,7 +134,9 @@ public class StructureGenerator : MonoBehaviour
         _navMeshSurface.BuildNavMesh();
 
         yield return new WaitForEndOfFrame();
-        
+
+        spawn.neighbors[0].entrance.GetComponent<Door>().locked = false;
+
         foreach (GameObject structure in subsequentStructures)
         {
             structure.SetActive(false);
@@ -99,14 +163,6 @@ public class StructureGenerator : MonoBehaviour
                         Destroy(branchChild.gameObject);
                         continue;
                     }
-
-                    // Bounds branchBounds = GetWorldBounds(branchChild);
-
-                    // if (rootBounds.Intersects(branchBounds))
-                    // {
-                    //     Destroy(branchChild.gameObject);
-                    //     continue;
-                    // }
                 }
             }
         }

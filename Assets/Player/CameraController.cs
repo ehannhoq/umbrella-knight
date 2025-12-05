@@ -14,8 +14,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] float _velocityThreshold;
     // Vector3 lockOnPos;
 
-    public float xSensitivity;
-    public float ySensitivity;
+    [SerializeField] private float xSensitivity;
+    [SerializeField] private float ySensitivity;
 
     public static bool cameraLock = false;
     public float cameraDistance;
@@ -38,7 +38,7 @@ public class CameraController : MonoBehaviour
     {
         float velocity = _rb.linearVelocity.magnitude;
 
-        if (velocity < _velocityThreshold) 
+        if (velocity < _velocityThreshold)
         {
             _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, _baseFOV, 0.25f);
             return;
@@ -54,6 +54,9 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+        ySensitivity = 1000f;
+        xSensitivity = 1000f;
+
         UpdateRotation();
         UpdatePosition();
     }
@@ -63,7 +66,7 @@ public class CameraController : MonoBehaviour
         if (_lookVec != Vector2.zero)
         {
             yaw += _lookVec.x * xSensitivity * Time.deltaTime;
-            pitch -= _lookVec.y * xSensitivity * Time.deltaTime;
+            pitch -= _lookVec.y * ySensitivity * Time.deltaTime;
 
             pitch = Math.Clamp(pitch, -40f, 80f);
             yaw = yaw % 360;

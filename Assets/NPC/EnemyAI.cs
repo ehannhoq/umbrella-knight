@@ -21,6 +21,7 @@ public class EnemyAI : MonoBehaviour
     public float immunityTime = 0.55f;
     public bool immune;
     public bool dead;
+    public bool canSeePlayer;
 
 
     [Header("AI Parameters")]
@@ -36,6 +37,7 @@ public class EnemyAI : MonoBehaviour
     [HideInInspector] public float distanceToPlayer;
 
     private ScriptableObject currentBehavior;
+    public bool useRigidBody;
 
     void Start()
     {
@@ -57,20 +59,33 @@ public class EnemyAI : MonoBehaviour
         agent.acceleration = movementSpeed;
 
         agent.enabled = false;
+        useRigidBody = false;
     }
 
     void Update()
     {
         if (dead) return;
-        
+
         distanceToPlayer = (transform.position - player.transform.position).magnitude;
+        canSeePlayer = !Physics.Linecast(transform.position + Vector3.up * (agent.height / 2f), player.transform.position + Vector3.up * 0.8f, ~(LayerMask.GetMask("Ignore Collision") | LayerMask.GetMask("NPC") | LayerMask.GetMask("NPCCollider") | LayerMask.GetMask("NPCHitbox")  | LayerMask.GetMask("Player") | LayerMask.GetMask("PlayerCollider") | LayerMask.GetMask("PlayerHitbox") | LayerMask.GetMask("UmbrellaCollider")));
+
+        Debug.DrawLine(transform.position + Vector3.up * (agent.height / 2f), player.transform.position + Vector3.up * 0.8f, canSeePlayer ? Color.green : Color.red);
+
+        if (!canSeePlayer)
+            ChangeCurrentBehavior(idleBehavior);
+
         currentBehaviorName = currentBehavior.GetType().ToString(); // debug
         ExecuteBehavior(currentBehavior);
+
+        if (useRigidBody)
+        {
+            rb.linearVelocity = AdjustForWall(rb.linearVelocity);
+        }
     }
 
-    public void Spawn(Transform spawnPos)
+    public EnemyAI Spawn(Transform spawnPos)
     {
-        Instantiate(this, spawnPos.position, spawnPos.rotation);
+        return Instantiate(this, spawnPos.position, spawnPos.rotation);
     }
 
     public void DealDamage(float damage)
@@ -94,7 +109,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         if (takesKnockback)
-            ChangeVelocity((-transform.forward + Vector3.up).normalized * PlayerStats.Instance.knockback);
+            ChangeVelocity((-transform.forward + (Vector3.up * 0.25f)).normalized * PlayerStats.Instance.knockback);
 
 
         StartCoroutine(ResetImmunity());
@@ -116,6 +131,8 @@ public class EnemyAI : MonoBehaviour
 
         yield return new WaitForFixedUpdate();
 
+        useRigidBody = true;
+
         yield return new WaitUntil(
             () => rb.linearVelocity.magnitude < 0.1f
         );
@@ -127,8 +144,36 @@ public class EnemyAI : MonoBehaviour
         rb.isKinematic = true;
         agent.Warp(transform.position);
         agent.enabled = true;
+        useRigidBody = false;
 
         yield return null;
+    }
+
+    Vector3 AdjustForWall(Vector3 velocity)
+    {
+        if (velocity.sqrMagnitude < 0.01f) return velocity;
+
+        Vector3 p1 = rb.position + Vector3.up * (0.3f);
+        Vector3 p2 = rb.position + Vector3.up * (agent.height - 0.3f);
+
+        float castDistance = Mathf.Max(0.25f, velocity.magnitude * Time.fixedDeltaTime);
+        if (Physics.CapsuleCast(
+            p1,
+            p2,
+            0.175f,
+            velocity.normalized,
+            out RaycastHit wallHit,
+            castDistance,
+            Util.nonColliderMasks
+        ))
+        {
+            Vector3 normal = wallHit.normal;
+            normal.y = 0;
+            Vector3 projected = Vector3.ProjectOnPlane(velocity, normal);
+            return projected;
+        }
+
+        return velocity;
     }
 
     public IEnumerator Kill()
@@ -138,14 +183,13 @@ public class EnemyAI : MonoBehaviour
         agent.enabled = false;
         dead = true;
 
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(2);
-
         yield return new WaitUntil(() =>
-            stateInfo.IsName("Die"));
+            animator.GetCurrentAnimatorStateInfo(2).IsName("Die"));
 
-        yield return new WaitForSeconds(stateInfo.length / (stateInfo.speed * animator.speed));
+        yield return new WaitForSeconds(1.5f);
 
         Destroy(gameObject);
+        StopAllCoroutines();
     }
 
     private IEnumerator ResetImmunity()

@@ -8,17 +8,22 @@ public class Structure : MonoBehaviour
     public bool playerInside;
     public GameObject entrance;
     public List<GameObject> exits;
+    public int spawnWeight = 1;
 
     public List<Structure> neighbors;
 
-    public StructureGenerator dungeonGenerator;
+    public StructureGenerator structureGenerator;
     public List<Transform> enemySpawns;
 
-    public void Initialize(StructureGenerator dungeonGenerator)
+
+    private List<GameObject> _activeEnemies;
+
+    public void Initialize(StructureGenerator structureGenerator)
     {
-        this.dungeonGenerator = dungeonGenerator;
+        this.structureGenerator = structureGenerator;
         neighbors = new List<Structure>();
         enemySpawns = new List<Transform>();
+        _activeEnemies = new List<GameObject>();
 
         foreach (Transform child in gameObject.transform)
         {
@@ -31,7 +36,9 @@ public class Structure : MonoBehaviour
 
     void Update()
     {
-        if (clearedRoom)
+        if (!clearedRoom)
+            CheckCleared();
+        else
         {
             foreach (GameObject exit in exits)
             {
@@ -46,21 +53,46 @@ public class Structure : MonoBehaviour
     public void OnEnterStructure()
     {
         playerInside = true;
-        SpawnEnemies();
         CullStructures();
+
+        if (!clearedRoom)
+            SpawnEnemies();
     }
 
     void SpawnEnemies()
     {
         if (enemySpawns.Count <= 0) return;
+        if (_activeEnemies.Count > 0) return;
 
-        int randomEnemyIndex = Random.Range(0, dungeonGenerator.enemies.Count - 1);
-        int randomSpawnIndex = Random.Range(0, enemySpawns.Count - 1);
+        foreach (Transform spawn in enemySpawns)
+        {
+            int randomEnemyIndex = Random.Range(0, structureGenerator.enemies.Count - 1);
+            EnemyAI enemyPrefab = structureGenerator.enemies[randomEnemyIndex];
+            EnemyAI spawned = enemyPrefab.Spawn(spawn);
+            _activeEnemies.Add(spawned.gameObject);
+        }
+    }
 
-        EnemyAI enemy = dungeonGenerator.enemies[randomEnemyIndex];
-        Transform spawnPos = enemySpawns[randomSpawnIndex];
+    void CheckCleared()
+    {
+        if (!playerInside) return;
 
-        enemy.Spawn(spawnPos);
+        if (_activeEnemies == null) return;
+
+        _activeEnemies.RemoveAll(e => e == null);
+
+        if (_activeEnemies.Count == 0)
+        {
+            clearedRoom = true;
+            foreach (GameObject exit in exits)
+            {
+                if (exit.TryGetComponent(out Door door))
+                {
+                    door.ToggleLocked();
+                }
+
+            }
+        }
     }
 
     void CullStructures()

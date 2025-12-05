@@ -8,13 +8,14 @@ public class WizardAttack : ScriptableObject, IEnemyBehavior
     public GameObject[] projectiles;
     public float[] attackTimes;
 
-    private bool isAttacking;
-    private Coroutine attackRoutine;
-
     public void Initialize(EnemyAI enemyAI)
     {
         enemyAI.animator.SetTrigger("ResetAttack");
         enemyAI.animator.ResetTrigger("Attack");
+
+        enemyAI.data["isAttacking"] = false;
+        enemyAI.data["attackCoroutine"] = null;
+        
         StartAttack(enemyAI);
     }
 
@@ -24,7 +25,7 @@ public class WizardAttack : ScriptableObject, IEnemyBehavior
         dir.y = 0;
         enemyAI.transform.rotation = Quaternion.LookRotation(dir);
 
-        if (isAttacking) return;
+        if ((bool)enemyAI.data["isAttacking"]) return;
 
         if (enemyAI.distanceToPlayer > enemyAI.minimumAttackDistance)
         {
@@ -37,12 +38,12 @@ public class WizardAttack : ScriptableObject, IEnemyBehavior
 
     public void OnLeave(EnemyAI enemyAI)
     {
-        if (attackRoutine != null)
+        if (enemyAI.data["attackCoroutine"] != null)
         {
-            enemyAI.StopCoroutine(attackRoutine);
-            attackRoutine = null;
+            enemyAI.StopCoroutine((Coroutine)enemyAI.data["attackCoroutine"]);
+            enemyAI.data["attackCoroutine"] = null;
         }
-        isAttacking = false;
+        enemyAI.data["isAttacking"] = false;
         enemyAI.animator.SetTrigger("ResetAttack");
         enemyAI.animator.ResetTrigger("Attack");
     }
@@ -50,14 +51,14 @@ public class WizardAttack : ScriptableObject, IEnemyBehavior
 
     private void StartAttack(EnemyAI enemyAI)
     {
-        if (attackRoutine != null) return;
-        attackRoutine = enemyAI.StartCoroutine(AttackSequence(enemyAI));
+        if (enemyAI.data["attackCoroutine"] != null) return;
+        enemyAI.data["attackCoroutine"] = enemyAI.StartCoroutine(AttackSequence(enemyAI));
     }
 
 
     private IEnumerator AttackSequence(EnemyAI enemyAI)
     {
-        isAttacking = true;
+        enemyAI.data["isAttacking"] = true;
 
         enemyAI.agent.enabled = false;
         enemyAI.animator.SetTrigger("Attack");
@@ -79,8 +80,8 @@ public class WizardAttack : ScriptableObject, IEnemyBehavior
         float cooldown = attackTimes[(int)enemyAI.data["staff_type"]];
         yield return new WaitForSeconds(cooldown);
 
-        isAttacking = false;
-        attackRoutine = null;
+        enemyAI.data["isAttacking"] = false;
+        enemyAI.data["attackCoroutine"] = null;
         enemyAI.agent.enabled = true;
     }
 
@@ -96,7 +97,7 @@ public class WizardAttack : ScriptableObject, IEnemyBehavior
         Vector3 pos = staff.transform.position + Vector3.up;
 
         Quaternion rot = Quaternion.LookRotation(
-            enemyAI.player.transform.position - pos
+            (enemyAI.player.transform.position + (Vector3.up * 0.6f)) - pos
         );
 
         proj.SpawnProjectile(pos, rot);

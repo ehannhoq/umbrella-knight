@@ -13,6 +13,7 @@ public class DeathCollision : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            PlayerStats.Instance.DealDamage(15);
             other.transform.position = root.transform.position;
         }
     }
