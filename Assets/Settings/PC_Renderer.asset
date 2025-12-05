@@ -1,5 +1,47 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5082297476778977482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
+  m_Name: RenderObjects
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    passTag: RenderObjects
+    Event: 450
+    filterSettings:
+      RenderQueueType: 0
+      LayerMask:
+        serializedVersion: 2
+        m_Bits: 1024
+      PassNames: []
+    overrideMaterial: {fileID: 0}
+    overrideMaterialPassIndex: 0
+    overrideShader: {fileID: 0}
+    overrideShaderPassIndex: 0
+    overrideMode: 1
+    overrideDepthState: 0
+    depthCompareFunction: 5
+    enableWrite: 0
+    stencilSettings:
+      overrideStencilState: 0
+      stencilReference: 0
+      stencilCompareFunction: 8
+      passOperation: 0
+      failOperation: 0
+      zFailOperation: 0
+    cameraSettings:
+      overrideCamera: 0
+      restoreCamera: 1
+      offset: {x: 0, y: 0, z: 0, w: 0}
+      cameraFieldOfView: 60
 --- !u!114 &-2834627310075193873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25,6 +67,48 @@ MonoBehaviour:
     overrideMaterial: {fileID: 2100000, guid: 2411fbb3a4b334e81b6b27b8ad07497f, type: 2}
     overrideMaterialPassIndex: 0
     overrideShader: {fileID: 0}
+    overrideShaderPassIndex: 0
+    overrideMode: 1
+    overrideDepthState: 1
+    depthCompareFunction: 4
+    enableWrite: 0
+    stencilSettings:
+      overrideStencilState: 0
+      stencilReference: 0
+      stencilCompareFunction: 8
+      passOperation: 0
+      failOperation: 0
+      zFailOperation: 0
+    cameraSettings:
+      overrideCamera: 0
+      restoreCamera: 1
+      offset: {x: 0, y: 0, z: 0, w: 0}
+      cameraFieldOfView: 60
+--- !u!114 &-2373542190401858506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
+  m_Name: RenderObjects
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    passTag: RenderObjects
+    Event: 350
+    filterSettings:
+      RenderQueueType: 0
+      LayerMask:
+        serializedVersion: 2
+        m_Bits: 1024
+      PassNames: []
+    overrideMaterial: {fileID: 2100000, guid: 5e6cdc07d6e864f0b8365cab1d72a1ff, type: 2}
+    overrideMaterialPassIndex: 0
+    overrideShader: {fileID: -6465566751694194690, guid: a3f2a561c91684c92b71e4684f996637, type: 3}
     overrideShaderPassIndex: 0
     overrideMode: 1
     overrideDepthState: 1
@@ -70,17 +154,19 @@ MonoBehaviour:
   - {fileID: 7833122117494664109}
   - {fileID: -2834627310075193873}
   - {fileID: 8792892596366310148}
-  m_RendererFeatureMap: ad6b866f10d7b46cefd558e07a61a9d8047b93ca3aa1067a
+  - {fileID: -2373542190401858506}
+  - {fileID: -5082297476778977482}
+  m_RendererFeatureMap: ad6b866f10d7b46cefd558e07a61a9d8047b93ca3aa1067a36d4b111f47b0fdf3697b93d5f0d78b9
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 2
   m_OpaqueLayerMask:
     serializedVersion: 2
-    m_Bits: 639
+    m_Bits: 201327231
   m_TransparentLayerMask:
     serializedVersion: 2
-    m_Bits: 639
+    m_Bits: 201327231
   m_DefaultStencilState:
     overrideStencilState: 0
     stencilReference: 1
@@ -137,7 +223,7 @@ MonoBehaviour:
   m_Active: 1
   settings:
     passTag: RenderObjects
-    Event: 550
+    Event: 450
     filterSettings:
       RenderQueueType: 0
       LayerMask:

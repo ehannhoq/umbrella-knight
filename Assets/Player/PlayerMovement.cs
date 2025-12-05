@@ -37,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody _rb;
     private Animator _anim;
     private GameObject _camera;
+    private UmbrellaManager _umbrellaManager;
 
     private Vector2 _moveInput;
     private RaycastHit _groundHit;
@@ -62,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
         _rb = player.GetComponent<Rigidbody>();
         _anim = player.GetComponent<Animator>();
         _camera = GameObject.FindWithTag("MainCamera");
+        _umbrellaManager = GetComponent<UmbrellaManager>(); 
 
         _rb.freezeRotation = true;
         canMove = true;
@@ -91,6 +93,9 @@ public class PlayerMovement : MonoBehaviour
             _rb.AddForce(Physics.gravity * _glidingGravity, ForceMode.Acceleration);
         else
             _rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
+
+        if (_umbrellaManager.blocking)
+            RotatePlayer(Vector3.ProjectOnPlane(_camera.transform.forward, Vector3.up).normalized, true);
     }
 
     void CheckGrounded()
@@ -103,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
             Vector3.down,
             out _groundHit,
             0.3f,
-            ~LayerMask.GetMask("Player"),
+            Util.nonColliderMasks,
             QueryTriggerInteraction.Ignore
             ))
         {
@@ -200,8 +205,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (direction.sqrMagnitude < 0.001f || !grounded)
         {
-            if (direction.sqrMagnitude < 0.001f) Debug.Log("Direction too small");
-            return;
+            if (direction.sqrMagnitude < 0.001f) return;
         }
 
         Vector3 lower = _rb.transform.position + Vector3.down * _minStepHeight;
@@ -261,7 +265,7 @@ public class PlayerMovement : MonoBehaviour
             velocity.normalized,
             out RaycastHit wallHit,
             castDistance,
-            ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Ignore Collision"))
+            Util.nonColliderMasks
         ))
         {
             Vector3 normal = wallHit.normal;
@@ -295,7 +299,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public void OnJump()
-    {   
+    {
         if (!canJump) return;
         canJump = true;
 

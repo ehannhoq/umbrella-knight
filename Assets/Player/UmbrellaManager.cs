@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -27,6 +28,9 @@ public class UmbrellaManager : MonoBehaviour
     Coroutine _resetAttackCoroutine;
     bool _inAttackAnimation;
     bool _inAerialAttack;
+    Collider _collider;
+    Coroutine _blockDelayCoroutine;
+    HashSet<EnemyAI> _hitEnemiesThisAttack;
 
     public bool blocking;
     public InputAction blockAction;
@@ -56,6 +60,9 @@ public class UmbrellaManager : MonoBehaviour
         _goUmbrella.transform.localRotation = Quaternion.Euler(-1.443f, 11.238f, -31.748f);
         _goUmbrella.transform.localScale = new Vector3(0.006f, 0.006f, 0.006f);
 
+        _collider = _goUmbrella.GetComponent<Collider>();
+        _collider.enabled = false;
+
         umbrellaState = UmbrellaState.Closed;
     }
 
@@ -70,13 +77,19 @@ public class UmbrellaManager : MonoBehaviour
     {
         bool canBlock = _movement.grounded || _rb.linearVelocity.y < 0;
 
-        if (blockAction.IsPressed() && canBlock)
+        if (blockAction.IsPressed())
         {
-            if (!_movement.grounded && !_movement.ascending)
-                _movement.gliding = true;
-            else
-                _movement.gliding = false;
+            _collider.enabled = false;
 
+            if (!_movement.grounded && !_movement.ascending)
+            {
+                _movement.gliding = true;
+            }
+            else
+            {
+                _movement.gliding = false;
+                StartCoroutine(Util.DelayedActionSeconds(0.25f, () => { _collider.enabled = true; }));
+            }
 
 
             if (umbrellaState == UmbrellaState.Closed)
@@ -88,14 +101,14 @@ public class UmbrellaManager : MonoBehaviour
                 if (!_movement.gliding)
                     // _movement.AddSpeedMultiplier("umbrella", 0.5f);
 
-                if (_resetAttackCoroutine != null)
-                {
-                    _attackPhase = 0;
-                    _movement.canMove = true;
-                    StopCoroutine(_resetAttackCoroutine);
-                    _resetAttackCoroutine = null;
-                    _animator.SetTrigger("ResetAttack");
-                }
+                    if (_resetAttackCoroutine != null)
+                    {
+                        _attackPhase = 0;
+                        _movement.canMove = true;
+                        StopCoroutine(_resetAttackCoroutine);
+                        _resetAttackCoroutine = null;
+                        _animator.SetTrigger("ResetAttack");
+                    }
             }
 
             _movement.RotatePlayer(Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized);
@@ -115,17 +128,17 @@ public class UmbrellaManager : MonoBehaviour
 
 
         _animator.SetBool("Gliding", _movement.gliding);
-
-        if (!_movement.gliding)
-            _animator.SetBool("Blocking", blocking);
-        else
-            _animator.SetBool("Blocking", false);
+        if (_blockDelayCoroutine == null)
+            _blockDelayCoroutine = StartCoroutine(Util.DelayedActionEndOfFrame(() => { 
+                _animator.SetBool("Blocking", blocking);
+                _blockDelayCoroutine = null;
+            }));
     }
+
 
     public void OnAttack()
     {
         if (umbrellaState == UmbrellaState.Open) return;
-
         if (_inAttackAnimation) return;
 
         if (heightOffGround >= _heightToUseAerialMoves)
@@ -135,10 +148,13 @@ public class UmbrellaManager : MonoBehaviour
         }
 
         _inAttackAnimation = true;
-
         _movement.canMove = false;
         _animator.SetBool("Moving", false);
+        _collider.enabled = true;
 
+        // start fresh hit tracking for this attack and do an immediate overlap check
+        _hitEnemiesThisAttack = new HashSet<EnemyAI>();
+        DoHitCheck();
         if (_resetAttackCoroutine != null)
         {
             StopCoroutine(_resetAttackCoroutine);
@@ -159,6 +175,9 @@ public class UmbrellaManager : MonoBehaviour
         {
             yield return new WaitForFixedUpdate();
             _rb.AddForce(_rb.transform.forward * _attackNudgeAmount, ForceMode.Acceleration);
+
+            // check overlap each physics step to catch fast/mid-frame collisions
+            DoHitCheck();
             time--;
         }
     }
@@ -171,6 +190,41 @@ public class UmbrellaManager : MonoBehaviour
         _movement.canMove = true;
         _resetAttackCoroutine = null;
         _animator.SetTrigger("ResetAttack");
+        _collider.enabled = false;
+
+        // clear hit tracking when the attack finishes
+        _hitEnemiesThisAttack = null;
+    }
+
+    // Physics overlap check to reliably detect enemies hit by the umbrella.
+    void DoHitCheck()
+    {
+        if (_collider == null) return;
+        if (_hitEnemiesThisAttack == null) _hitEnemiesThisAttack = new HashSet<EnemyAI>();
+
+        // Use the collider's bounds as the overlap box. Rotation is provided from the umbrella transform.
+        var center = _collider.bounds.center;
+        var extents = _collider.bounds.extents;
+        var rot = _goUmbrella != null ? _goUmbrella.transform.rotation : Quaternion.identity;
+
+        Collider[] hits = Physics.OverlapBox(center, extents, rot);
+        foreach (var c in hits)
+        {
+            if (c == null) continue;
+            var enemy = c.GetComponentInParent<EnemyAI>();
+            if (enemy == null) continue;
+            if (_hitEnemiesThisAttack.Contains(enemy)) continue;
+
+            _hitEnemiesThisAttack.Add(enemy);
+
+            // apply damage and knockback similar to EnemyHitbox
+            enemy.DealDamage(PlayerStats.Instance.attackDamage);
+            if (enemy.takesKnockback)
+            {
+                Vector3 knockDir = (_player.transform.forward + Vector3.up).normalized;
+                enemy.ChangeVelocity(knockDir * PlayerStats.Instance.knockback);
+            }
+        }
     }
 
     IEnumerator WaitForAnimation()
@@ -178,6 +232,7 @@ public class UmbrellaManager : MonoBehaviour
         AnimatorClipInfo[] text = _animator.GetCurrentAnimatorClipInfo(0);
         yield return new WaitForSeconds(text[0].clip.length - 0.5f);
         _inAttackAnimation = false;
+        _collider.enabled = false;
     }
 
     void OnAerialAttack()
@@ -214,5 +269,8 @@ public class UmbrellaManager : MonoBehaviour
         _goUmbrella.transform.localPosition = new Vector3(-0.00022f, 0.00133f, -0.00223f);
         _goUmbrella.transform.localRotation = Quaternion.Euler(-1.443f, 11.238f, -31.748f);
         _goUmbrella.transform.localScale = new Vector3(0.006f, 0.006f, 0.006f);
+
+        _collider = _goUmbrella.GetComponent<Collider>();
+        _collider.enabled = false;
     }
 }

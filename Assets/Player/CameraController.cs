@@ -75,10 +75,9 @@ public class CameraController : MonoBehaviour
 
     private void UpdatePosition()
     {
-        int layerMask = ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Ignore Collision"));
         Vector3 lookAtPos = _player.transform.position + offset;
 
-        if (Physics.Raycast(lookAtPos, -_cam.transform.forward, out RaycastHit info, cameraDistance, layerMask))
+        if (Physics.Raycast(lookAtPos, -_cam.transform.forward, out RaycastHit info, cameraDistance, Util.nonColliderMasks))
         {
             float collisionOffset = 0.2f;
 

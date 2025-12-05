@@ -8,6 +8,7 @@ TagManager:
   - Door
   - Interactable
   - EnemySpawn
+  - Umbrella
   layers:
   - Default
   - TransparentFX
@@ -19,6 +20,7 @@ TagManager:
   - Outlined Object
   - Ignore Collision
   - Ground
+  - NPC
   - 
   - 
   - 
@@ -34,13 +36,12 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - HurtCollider
+  - UmbrellaCollider
+  - PlayerCollider
+  - PlayerHitbox
+  - NPCCollider
+  - NPCHitbox
   m_SortingLayers:
   - name: Default
     uniqueID: 0

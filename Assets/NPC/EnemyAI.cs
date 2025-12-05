@@ -1,0 +1,187 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+public class EnemyAI : MonoBehaviour
+{
+    [Tooltip("Optional")]
+    [SerializeField] ScriptableObject spawnBehavior;
+    [SerializeField] ScriptableObject idleBehavior;
+    [SerializeField] ScriptableObject stunnedBehavior;
+
+
+    [Header("Enemy Parameters")]
+    public float health;
+    public float maxHealth;
+    public float movementSpeed;
+    public bool takesKnockback;
+    public bool getsStunned;
+    public float stunDuration;
+    public float immunityTime = 0.55f;
+    public bool immune;
+    public bool dead;
+
+
+    [Header("AI Parameters")]
+    public string currentBehaviorName;
+    public float minimumMoveDistance;
+    public float minimumAttackDistance;
+    public Dictionary<string, object> data;
+
+    [HideInInspector] public GameObject player;
+    [HideInInspector] public NavMeshAgent agent;
+    [HideInInspector] public Rigidbody rb;
+    [HideInInspector] public Animator animator;
+    [HideInInspector] public float distanceToPlayer;
+
+    private ScriptableObject currentBehavior;
+
+    void Start()
+    {
+        data = new Dictionary<string, object>();
+        health = maxHealth;
+
+        currentBehavior = idleBehavior;
+        InitializeBehavior(currentBehavior);
+        InitializeBehavior(spawnBehavior);
+
+        player = GameObject.FindWithTag("Player");
+        agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
+
+
+        rb.freezeRotation = true;
+        agent.speed = movementSpeed;
+        agent.acceleration = movementSpeed;
+
+        agent.enabled = false;
+    }
+
+    void Update()
+    {
+        if (dead) return;
+        
+        distanceToPlayer = (transform.position - player.transform.position).magnitude;
+        currentBehaviorName = currentBehavior.GetType().ToString(); // debug
+        ExecuteBehavior(currentBehavior);
+    }
+
+    public void Spawn(Transform spawnPos)
+    {
+        Instantiate(this, spawnPos.position, spawnPos.rotation);
+    }
+
+    public void DealDamage(float damage)
+    {
+        if (immune) return;
+
+        immune = true;
+        health -= damage;
+        animator.SetTrigger("Damaged");
+
+        if (health <= 0)
+            StartCoroutine(Kill());
+
+        if (getsStunned)
+        {
+            ChangeCurrentBehavior(stunnedBehavior);
+        }
+        else
+        {
+            ChangeCurrentBehavior(idleBehavior);
+        }
+
+        if (takesKnockback)
+            ChangeVelocity((-transform.forward + Vector3.up).normalized * PlayerStats.Instance.knockback);
+
+
+        StartCoroutine(ResetImmunity());
+    }
+
+    public void ChangeVelocity(Vector3 velocity)
+    {
+        StartCoroutine(UseRigidBody(velocity));
+    }
+
+    private IEnumerator UseRigidBody(Vector3 vector)
+    {
+        yield return null;
+        agent.enabled = false;
+        rb.useGravity = true;
+        rb.isKinematic = false;
+
+        rb.AddForce(vector, ForceMode.VelocityChange);
+
+        yield return new WaitForFixedUpdate();
+
+        yield return new WaitUntil(
+            () => rb.linearVelocity.magnitude < 0.1f
+        );
+        yield return new WaitForSeconds(0.25f);
+
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        rb.useGravity = false;
+        rb.isKinematic = true;
+        agent.Warp(transform.position);
+        agent.enabled = true;
+
+        yield return null;
+    }
+
+    public IEnumerator Kill()
+    {
+        data.Clear();
+        animator.SetTrigger("Died");
+        agent.enabled = false;
+        dead = true;
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(2);
+
+        yield return new WaitUntil(() =>
+            stateInfo.IsName("Die"));
+
+        yield return new WaitForSeconds(stateInfo.length / (stateInfo.speed * animator.speed));
+
+        Destroy(gameObject);
+    }
+
+    private IEnumerator ResetImmunity()
+    {
+        yield return new WaitForSeconds(immunityTime);
+        immune = false;
+    }
+
+    public void ChangeCurrentBehavior(ScriptableObject newBehavior)
+    {
+        LeaveBehavior(currentBehavior);
+        currentBehavior = newBehavior;
+        InitializeBehavior(currentBehavior);
+    }
+
+    void InitializeBehavior(ScriptableObject behavior)
+    {
+        if (behavior != null && behavior is IEnemyBehavior enemyBehavior)
+        {
+            enemyBehavior.Initialize(this);
+        }
+    }
+
+    void ExecuteBehavior(ScriptableObject behavior)
+    {
+        if (behavior != null && behavior is IEnemyBehavior enemyBehavior)
+        {
+            enemyBehavior.Execute(this);
+        }
+    }
+
+    void LeaveBehavior(ScriptableObject behavior)
+    {
+        if (behavior != null && behavior is IEnemyBehavior enemyBehavior)
+        {
+            enemyBehavior.OnLeave(this);
+        }
+    }
+}

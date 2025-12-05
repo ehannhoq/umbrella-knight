@@ -57,14 +57,10 @@ public class Structure : MonoBehaviour
         int randomEnemyIndex = Random.Range(0, dungeonGenerator.enemies.Count - 1);
         int randomSpawnIndex = Random.Range(0, enemySpawns.Count - 1);
 
-        GameObject enemy = dungeonGenerator.enemies[randomEnemyIndex];
+        EnemyAI enemy = dungeonGenerator.enemies[randomEnemyIndex];
         Transform spawnPos = enemySpawns[randomSpawnIndex];
 
-        Instantiate(
-            enemy,
-            spawnPos.position,
-            spawnPos.rotation
-        );
+        enemy.Spawn(spawnPos);
     }
 
     void CullStructures()

@@ -28,7 +28,7 @@ public class PlayerInteractManager : MonoBehaviour
             _cam.transform.forward,
             out RaycastHit hit,
             _interactDistance,
-            ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Ignore Collisions"))
+            Util.nonColliderMasks
         ))
         {
             InteractableMonobehavior interactable = FindInteractable(hit.transform);
@@ -50,7 +50,7 @@ public class PlayerInteractManager : MonoBehaviour
         if (t.parent == null)
             return null;
 
-        return FindInteractable(t.parent);  
+        return FindInteractable(t.parent);
     }
 
     private void HandleOutlines()

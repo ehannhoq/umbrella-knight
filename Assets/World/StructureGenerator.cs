@@ -14,7 +14,7 @@ public class StructureGenerator : MonoBehaviour
 
     private NavMeshSurface _navMeshSurface;
 
-    public List<GameObject> enemies;
+    public List<EnemyAI> enemies;
 
     void Start()
     {

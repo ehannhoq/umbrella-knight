@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "WizardMoveBehavior", menuName = "EnemyBehaviors/Wizard/Move")]
@@ -6,19 +7,17 @@ public class WizardMove : ScriptableObject, IEnemyBehavior
 {
     public ScriptableObject idleBehavior;
     public ScriptableObject attackBehavior;
-    public float movementSpeed;
 
     public void Initialize(EnemyAI enemyAI)
     {
-        enemyAI.agent.acceleration = movementSpeed;
-        enemyAI.agent.speed = movementSpeed;
+        enemyAI.animator.SetBool("Walking", true);
+
+        enemyAI.agent.Warp(enemyAI.transform.position);
+        enemyAI.agent.enabled = true;
     }
+
     public void Execute(EnemyAI enemyAI)
     {
-        Debug.Log("Move!");
-
-        enemyAI.transform.rotation = Quaternion.LookRotation(enemyAI.player.transform.position - enemyAI.transform.position);
-        
         if (enemyAI.distanceToPlayer <= enemyAI.minimumAttackDistance)
         {
             enemyAI.ChangeCurrentBehavior(attackBehavior);
@@ -31,6 +30,12 @@ public class WizardMove : ScriptableObject, IEnemyBehavior
             return;
         }
 
-        enemyAI.MoveToPosition(enemyAI.player.transform.position);
+        if (enemyAI.agent.enabled)
+            enemyAI.agent.SetDestination(enemyAI.player.transform.position);
+    }
+
+    public void OnLeave(EnemyAI enemyAI)
+    {
+        enemyAI.animator.SetBool("Walking", false);
     }
 }
