@@ -9,7 +9,8 @@ public class EnemyHealthbar : MonoBehaviour
 
     void Update()
     {
-        text.text = $"{MathF.Round(enemyAI.health)}/{enemyAI.maxHealth}";
+        float currentHealth = Math.Clamp(enemyAI.health, 0, enemyAI.maxHealth);
+        text.text = $"{MathF.Round(currentHealth)}/{enemyAI.maxHealth}";
 
         Vector3 rot = enemyAI.player.transform.position - transform.position;
         transform.rotation = Quaternion.LookRotation(-rot);

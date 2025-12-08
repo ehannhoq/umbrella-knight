@@ -46,8 +46,7 @@ public class PlayerStats : MonoBehaviour
 
     void OnDeath()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Title");
-        
+        health = maxHealth;
     }
 
 

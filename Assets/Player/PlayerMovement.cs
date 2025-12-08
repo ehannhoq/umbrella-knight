@@ -193,7 +193,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 top = _rb.position + Vector3.up * (_playerHeight - 0.3f);
         Vector3 bottom = _rb.position + Vector3.up * 0.3f;
 
-        if (Physics.CapsuleCast(bottom, top, radius, direction, out hit, _maximumDistanceFromWallForWallRide, ~LayerMask.GetMask("Player")))
+        if (Physics.CapsuleCast(bottom, top, radius, direction, out hit, _maximumDistanceFromWallForWallRide, Util.nonColliderMasks))
             return true;
 
         hit = new RaycastHit();

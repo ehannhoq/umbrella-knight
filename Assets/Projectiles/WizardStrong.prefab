@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1248532828802042187}
   - component: {fileID: 4294321613501071402}
-  m_Layer: 26
+  m_Layer: 19
   m_Name: Hitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,10 +42,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 268435456
+    m_Bits: 131072
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 3959427071
+    m_Bits: 3223159039
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 4906789127318513540}
   - component: {fileID: 8925829702398118937}
   - component: {fileID: 5068945792483570079}
-  m_Layer: 26
+  m_Layer: 19
   m_Name: RotatePart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4955,7 +4955,7 @@ GameObject:
   - component: {fileID: 1796011159821275421}
   - component: {fileID: 7932950082945570079}
   - component: {fileID: 59365175451831648}
-  m_Layer: 26
+  m_Layer: 19
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9904,7 +9904,7 @@ GameObject:
   - component: {fileID: 2593414102570738049}
   - component: {fileID: 789277759749713352}
   - component: {fileID: 4936574868790400936}
-  m_Layer: 26
+  m_Layer: 19
   m_Name: Slash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14799,7 +14799,7 @@ GameObject:
   - component: {fileID: 2046975923011720164}
   - component: {fileID: -3806549132460206824}
   - component: {fileID: 6598578330024479829}
-  m_Layer: 26
+  m_Layer: 19
   m_Name: WizardStrong
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14819,12 +14819,12 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1248532828802042187}
   - {fileID: 5885532661660373326}
   - {fileID: 2593414102570738049}
   - {fileID: 4906789127318513540}
   - {fileID: 5518836358112447631}
   - {fileID: 1796011159821275421}
-  - {fileID: 1248532828802042187}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-7541426559650476782
@@ -14839,7 +14839,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8355c500d130f4a24b3dbd5a9b4380a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 8
+  speed: 7
   damage: 15
   wallBehavior: 0
   numBounces: 1
@@ -19724,11 +19724,11 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 268435456
+    m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
+    m_Bits: 3155953920
+  m_LayerOverridePriority: 1
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
@@ -19773,7 +19773,7 @@ GameObject:
   - component: {fileID: 5885532661660373326}
   - component: {fileID: 8473494058548093953}
   - component: {fileID: 4854812545579891053}
-  m_Layer: 26
+  m_Layer: 19
   m_Name: Glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24682,7 +24682,7 @@ GameObject:
   - component: {fileID: 5518836358112447631}
   - component: {fileID: 4903624357972609933}
   - component: {fileID: 5941057677031495538}
-  m_Layer: 26
+  m_Layer: 19
   m_Name: Flares
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -16,12 +16,8 @@ TagManager:
   - Light
   - Water
   - UI
-  - Player
-  - Outlined Object
-  - Ignore Collision
   - Ground
-  - NPC
-  - IgnoreNavMesh
+  - OutlinedObject
   - 
   - 
   - 
@@ -29,19 +25,23 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - HurtCollider
-  - UmbrellaCollider
+  - Player
   - PlayerCollider
   - PlayerHitbox
-  - NPCCollider
-  - NPCHitbox
+  - Enemy
+  - EnemyCollider
+  - EnemyHitbox
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - IgnoreNavMesh
+  - IgnoreCollisions
   m_SortingLayers:
   - name: Default
     uniqueID: 0

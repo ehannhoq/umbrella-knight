@@ -32,7 +32,7 @@ public class Projectile : MonoBehaviour
             _rb.transform.forward,
             out RaycastHit hit,
             _rb.linearVelocity.magnitude * Time.fixedDeltaTime,
-            Util.nonColliderMasks & ~LayerMask.GetMask("NPC")
+            ~Util.nonColliderMasks
         ))
         {
             switch (wallBehavior) 

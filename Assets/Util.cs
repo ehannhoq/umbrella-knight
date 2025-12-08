@@ -4,7 +4,16 @@ using UnityEngine;
 
 public static class Util
 {
-    public static LayerMask nonColliderMasks => ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Ignore Collision") | LayerMask.GetMask("NPCHitbox") | LayerMask.GetMask("PlayerHitbox") | LayerMask.GetMask("UmbrellaCollider") | LayerMask.GetMask("HurtCollider"));
+    public static LayerMask nonColliderMasks => ~(
+        LayerMask.GetMask("Player") |
+        LayerMask.GetMask("PlayerCollider") |
+        LayerMask.GetMask("PlayerHitbox") |
+        LayerMask.GetMask("Enemy") |
+        LayerMask.GetMask("EnemyCollider") |
+        LayerMask.GetMask("EnemyHitbox") |
+        LayerMask.GetMask("IgnoreCollisions")
+    );
+    
     public static IEnumerator DelayedActionSeconds(float seconds, Action code)
     {
         yield return new WaitForSeconds(seconds);

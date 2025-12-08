@@ -57,7 +57,7 @@ MonoBehaviour:
   m_Active: 1
   settings:
     passTag: RenderObjects
-    Event: 350
+    Event: 600
     filterSettings:
       RenderQueueType: 0
       LayerMask:
@@ -163,10 +163,10 @@ MonoBehaviour:
   m_AssetVersion: 2
   m_OpaqueLayerMask:
     serializedVersion: 2
-    m_Bits: 201329279
+    m_Bits: 1275955967
   m_TransparentLayerMask:
     serializedVersion: 2
-    m_Bits: 201327231
+    m_Bits: 1275953919
   m_DefaultStencilState:
     overrideStencilState: 0
     stencilReference: 1
@@ -223,7 +223,7 @@ MonoBehaviour:
   m_Active: 1
   settings:
     passTag: RenderObjects
-    Event: 450
+    Event: 1000
     filterSettings:
       RenderQueueType: 0
       LayerMask:

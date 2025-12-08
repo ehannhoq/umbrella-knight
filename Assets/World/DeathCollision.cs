@@ -11,11 +11,8 @@ public class DeathCollision : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            PlayerStats.Instance.DealDamage(15);
-            other.transform.position = root.transform.position;
-        }
+        PlayerStats.Instance.DealDamage(15);
+        other.transform.position = root.transform.position;
     }
 
     private Structure FindRoot(Transform t)

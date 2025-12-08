@@ -14,9 +14,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] float _velocityThreshold;
     // Vector3 lockOnPos;
 
-    [SerializeField] private float xSensitivity;
-    [SerializeField] private float ySensitivity;
-
     public static bool cameraLock = false;
     public float cameraDistance;
     public float yaw;
@@ -54,9 +51,6 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        ySensitivity = 1000f;
-        xSensitivity = 1000f;
-
         UpdateRotation();
         UpdatePosition();
     }
@@ -65,8 +59,10 @@ public class CameraController : MonoBehaviour
     {
         if (_lookVec != Vector2.zero)
         {
-            yaw += _lookVec.x * xSensitivity * Time.deltaTime;
-            pitch -= _lookVec.y * ySensitivity * Time.deltaTime;
+            float sensitivity = PlayerPrefs.GetFloat("sensitivity", 0.5f) * 400f + 100f;
+
+            yaw += _lookVec.x * sensitivity * Time.deltaTime;
+            pitch -= _lookVec.y * sensitivity * Time.deltaTime;
 
             pitch = Math.Clamp(pitch, -40f, 80f);
             yaw = yaw % 360;

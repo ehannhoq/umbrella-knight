@@ -14,7 +14,7 @@ public class PlayerInteractManager : MonoBehaviour
     void Start()
     {
         _cam = Camera.main;
-        _outlineLayer = LayerMask.NameToLayer("Outlined Object");
+        _outlineLayer = LayerMask.NameToLayer("OutlinedObject");
         _defaultLayer = LayerMask.NameToLayer("Default");
     }
 
