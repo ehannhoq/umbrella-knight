@@ -178,6 +178,7 @@ public class EnemyAI : MonoBehaviour
 
     public IEnumerator Kill()
     {
+        currentBehavior = null;
         data.Clear();
         animator.SetTrigger("Died");
         agent.enabled = false;
