@@ -9,7 +9,7 @@ public class TitleScreenParallax : MonoBehaviour
 
     [SerializeField] private float parallaxAmount;
 
-    private Transform baseCameraTransform;
+    public Vector2 mousePos;
     private Vector3 baseCameraForwardEuler;
 
     void Start()
@@ -17,15 +17,14 @@ public class TitleScreenParallax : MonoBehaviour
         cameraObj = GameObject.FindWithTag("MainCamera");
         playerObj = GameObject.FindWithTag("Player");
 
-        baseCameraTransform = cameraObj.transform;
         baseCameraForwardEuler = cameraObj.transform.rotation.eulerAngles;
     }
 
     void Update()
     {
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        mousePos.x /= Screen.width;
-        mousePos.y /= Screen.height;
+        mousePos = Mouse.current.position.ReadValue();
+        mousePos.x = (mousePos.x / (Screen.width / 2)) - 1;
+        mousePos.y = (mousePos.y / (Screen.height / 2)) - 1;
 
         Quaternion targetRot = Quaternion.Euler(
             baseCameraForwardEuler.x + mousePos.y * parallaxAmount,
