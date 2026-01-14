@@ -648,8 +648,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09aa70f3b682c415697f5651627a7e95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensSliderValue: 1
-  volSliderValue: 1
 --- !u!4 &776066492
 Transform:
   m_ObjectHideFlags: 0
@@ -1937,13 +1935,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1495356130}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.114277795, y: 0.89006704, z: 0.21540758, w: 0.38512456}
+  m_LocalRotation: {x: -0.09378748, y: 0.9001974, z: 0.16812, w: 0.39062032}
   m_LocalPosition: {x: 4.46, y: 0.94, z: 17.63}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -28.13, y: 133.815, z: -2.438}
+  m_LocalEulerAnglesHint: {x: -22.083, y: 133.538, z: -2.32}
 --- !u!114 &1495356134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2115,7 +2113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 123.155, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1258.82, y: -452.76}
+  m_AnchoredPosition: {x: -1258.82, y: -453.18}
   m_SizeDelta: {x: 1476, y: 1824}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1552386690
@@ -2231,7 +2229,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 465b715f792b3482fad17133be477683, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxAmount: 4
+  parallaxAmount: 2
+  mousePos: {x: 0, y: 0}
 --- !u!224 &2140237978 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6972115464022353268, guid: 8f890e86a2c3f4ae6b290819c853480c, type: 3}
